@@ -1,0 +1,11 @@
+minPasswordLength: 3
+maxPasswordLength: 50
+maxLoginLength: 30
+minLoginLength: 3
+adminLogin: admin
+adminPassword: admin
+userDataPath: ./../bin/UserData.txt
+configDataPath: ../Auth/bin/config.txt
+SubcriberDataPath: ../bin/MachineData.txt
+RateDataPath = ../bin/TypeData.txt
+ClientDataPath = ../bin/ClientDataPath.txt
