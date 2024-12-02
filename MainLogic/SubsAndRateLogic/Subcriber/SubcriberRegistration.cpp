@@ -64,7 +64,7 @@ void SubcriberRegistration::SubcriberRegister(User &user) {
         Subcriber addsSubcriber(subId, isblock, age, rateId, connectDate,
                                 phone, surname, name, midName);
         subcriber.addSubcriber(addsSubcriber);
-        //TODO: machineFileSystem.SaveSubcriberInfo(addsMachineAdd);
+        //TODO: SubsFileSystem.SaveSubcriberInfo(addsMachineAdd);
     }
 }
 

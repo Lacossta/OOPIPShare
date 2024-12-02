@@ -78,7 +78,6 @@ int Utils::FindByIdIntoUsers(const int id) {
         if(users[i].getId() == id)
         {
             return i;
-            break;
         }
     }
     return -1;

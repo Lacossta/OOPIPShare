@@ -4,9 +4,9 @@
 
 int main() {
     userFileSystem.LoadUserInfo();
-    machineFileSystem.LoadRateInfo();
-    machineFileSystem.LoadSubcriberInfo();
-    machineFileSystem.LoadClientInfo();
+    SubsFileSystem.LoadRateInfo();
+    SubsFileSystem.LoadSubcriberInfo();
+    SubsFileSystem.LoadClientInfo();
     auth.Authentication();
     return 0;
 }

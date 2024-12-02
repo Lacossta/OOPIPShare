@@ -1,6 +1,6 @@
 #include "SubsAndRateFileSystem.h"
 
-SubsAndRateFileSystem machineFileSystem;
+SubsAndRateFileSystem SubsFileSystem;
 
 void SubsAndRateFileSystem::LoadSubcriberInfo() {
     ifstream file(config.SubcriberDataPath);

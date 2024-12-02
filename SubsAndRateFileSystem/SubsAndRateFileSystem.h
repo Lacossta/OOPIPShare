@@ -22,6 +22,6 @@ public:
     SubsAndRateFileSystem();
 };
 
-extern SubsAndRateFileSystem machineFileSystem;
+extern SubsAndRateFileSystem SubsFileSystem;
 
 #endif //KURSACH_SUBSANDRATEFILESYSTEM_H
