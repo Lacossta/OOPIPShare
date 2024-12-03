@@ -12,10 +12,12 @@ int Client::generateClientId() {
     }
 }
 
-Client::Client(int clientId, int age, string name) {
+Client::Client(int clientId, int age, string surname,  string name, string midName) {
     this->clientId = clientId;
     this->age = age;
+    this->surname = surname;
     this->name = name;
+    this->midName = midName;
 
 }
 
@@ -65,10 +67,15 @@ void Client::setMidName(const string &midName) {
     Client::midName = midName;
 }
 
-const string &Client::getName() const {
-    return name;
+void Client::DisplaySingleClient(int clientId, int age, string surname, string name, string midName) {
+    cout << "\n┌────────────────────────────────────┐\n";
+    cout << "│           Данные клиента           │\n";
+    cout << "├────────────────────────────────────┤\n";
+    cout << "│ " << setw(20) << "ID:" << setw(20) << clientId << " │\n";
+    cout << "│ " << setw(20) << "ФИО:" << setw(10) << (surname + " " + name + " " + midName) << " │\n";
+    cout << "│ " << setw(20) << "Возраст:" << setw(20) << age << " │\n";
+    cout << "└────────────────────────────────────┘\n";
 }
-void Client::setName(const string &name) {
-    Client::name = name;
-}
+
+
 

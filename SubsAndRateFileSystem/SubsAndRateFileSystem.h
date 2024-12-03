@@ -4,6 +4,7 @@
 #include "../PathToLibs.h"
 #include "../MainLogic/SubsAndRateLogic//Rate/Rate.h"
 #include "../MainLogic/SubsAndRateLogic/Client/Client.h"
+#include "../MainLogic/SubsAndRateLogic/Subcriber/Subcriber.h"
 
 class SubsAndRateFileSystem {
 public:

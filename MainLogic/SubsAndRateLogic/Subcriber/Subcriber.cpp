@@ -103,7 +103,7 @@ void Subcriber::setSubcribers(const vector<Subcriber> &subcribers) {
     Subcriber::subcribers = subcribers;
 }
 
-void DisplaySingleSubcriber(int subId, bool isblock, int age, int rateId, string connectDate,
+void Subcriber::DisplaySingleSubcriber(int subId, bool isblock, int age, int rateId, string connectDate,
                             string phone, string surname, string name, string midName){
     cout << "\n┌────────────────────────────────────┐\n";
     cout << "│          Данные абонента          │\n";
@@ -118,7 +118,7 @@ void DisplaySingleSubcriber(int subId, bool isblock, int age, int rateId, string
     cout << "└────────────────────────────────────┘\n";
 }
 
-void DisplaySingleSubcriber(int age, int rateId, string connectDate,
+void Subcriber::DisplaySingleSubcriber(int age, int rateId, string connectDate,
                             string phone, string surname, string name, string midName) {
     cout << "\n┌────────────────────────────────────┐\n";
     cout << "│          Введенные данные          │\n";

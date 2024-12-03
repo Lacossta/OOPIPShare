@@ -5,11 +5,9 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-//#include "../config/config.h"
-//#include "../Auth/User/User.h"
-
 #include "../PathToLibs.h"
 #include "../MainLogic/SubsAndRateLogic//Subcriber/Subcriber.h"
+#include "../MainLogic/SubsAndRateLogic//Client//Client.h"
 
 using namespace std;
 
@@ -24,7 +22,9 @@ public:
 
 
     int FindByIdIntoRates(const int id);
+
     int FindByIdIntoClient(const int id);
+    Client FindClientById(const int id);
 
 
     int GenerateID();

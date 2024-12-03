@@ -18,6 +18,7 @@ public:
     void SearchSubcriber();
     void SortSubcriber();
     void BanSubcriber();
+    void DisplayAllSubcribers(vector<Subcriber> subcribers);
     void DisplayAllSubcribers();
 
     // ---Client---
@@ -27,7 +28,8 @@ public:
     void RemoveClient();
     void SearchClient();
     void SortClient();
-    void DisplayClient();
+    void DisplayAllClients(vector<Client> clients);
+    void DisplayAllClients();
 
     // ---Rate---
     void RateMenu();

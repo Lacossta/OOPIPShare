@@ -59,6 +59,7 @@ int Utils::FindByIdIntoRates(const int id) {
     return -1;
 }
 
+
 int Utils::FindByIdIntoClient(const int id) {
     vector <Client> clients = client.getClients();
     for(int i =0; i<clients.size(); i++)
@@ -70,6 +71,17 @@ int Utils::FindByIdIntoClient(const int id) {
     }
     return -1;
 }
+
+Client Utils::FindClientById(const int id) {
+    Client localClient;
+
+    for(int i = 0; i < client.getClients().size(); i++){
+        localClient.setClientId(client.getClients()[i].getClientId());
+        return localClient;
+    }
+    return localClient;
+}
+
 
 int Utils::FindByIdIntoUsers(const int id) {
     vector <User> users = auth.getUsers();

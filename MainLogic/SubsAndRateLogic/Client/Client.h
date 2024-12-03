@@ -33,21 +33,17 @@ public:
     void setClients(const vector<Client> &clients);
 
     Client();
-    Client(int clientId, int age, string surname,  string name, string midName;);
+    Client(int clientId, int age, string surname,  string name, string midName);
 
 public:
     void addClient(const Client &clientAdd);
 
     int generateClientId();
 
-
-
-
+    void DisplaySingleClient(int clientId, int age, string surname, string name, string midName);
 };
 
 extern Client client;
-
-
 
 
 #endif //KURSACH_CLIENT_H
