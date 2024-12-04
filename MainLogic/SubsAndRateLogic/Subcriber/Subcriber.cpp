@@ -104,29 +104,54 @@ void Subcriber::setSubcribers(const vector<Subcriber> &subcribers) {
 }
 
 void Subcriber::DisplaySingleSubcriber(int subId, bool isblock, int age, int rateId, string connectDate,
-                            string phone, string surname, string name, string midName){
-    cout << "\n┌────────────────────────────────────┐\n";
-    cout << "│          Данные абонента          │\n";
-    cout << "├────────────────────────────────────┤\n";
-    cout << "│ " << setw(20) << "ID:" << setw(20) << subId << " │\n";
-    cout << "│ " << setw(20) << "ФИО:" << setw(10) << (surname + " " + name + " " + midName) << " │\n";
-    cout << "│ " << setw(20) << "Возраст:" << setw(20) << age << " │\n";
-    cout << "│ " << setw(20) << "Телефон:" << setw(20) << phone << " │\n";
-    cout << "│ " << setw(20) << "ID тарифа:" << setw(20) << rateId << " │\n";
-    cout << "│ " << setw(20) << "Дата подключения:" << setw(20) << connectDate << " │\n";
-    cout << "│ " << setw(20) << "Заблокирован:" << setw(20) << boolalpha << isblock << " │\n";
-    cout << "└────────────────────────────────────┘\n";
+                                       string phone, string surname, string name, string midName) {
+    auto trim = [](const string &str, size_t maxLength) {
+        if (str.length() > maxLength)
+            return str.substr(0, maxLength - 1) + ".";
+        return str;
+    };
+
+    cout << "\n╔═════════════════════════════════════════════════════════════════════════════╗\n";
+    cout <<   "║                              Данные абонента                                ║\n";
+    cout <<   "╠════════════════╤════════════════════════════════════════════════════════════╣\n";
+    cout << "║ " << setw(14) << left << "ID:"
+         << " │ " << setw(58) << left << subId << " ║\n";
+    cout << "║ " << setw(17) << left << "ФИО:"
+         << " │ " << setw(58) << left << trim(surname + " " + name + " " + midName, 53) << " ║\n";
+    cout << "║ " << setw(21) << left << "Возраст:"
+         << " │ " << setw(58) << left << age << " ║\n";
+    cout << "║ " << setw(21) << left << "Телефон:"
+         << " │ " << setw(58) << left << trim(phone, 50) << " ║\n";
+    cout << "║ " << setw(20) << left << "ID тарифа:"
+         << " │ " << setw(58) << left << rateId << " ║\n";
+    cout << "║ " << setw(21) << left << "Дата подключ.:"
+         << " │ " << setw(58) << left << trim(connectDate, 50) << " ║\n";
+    cout << "║ " << setw(26) << left << "Заблокирован:"
+         << " │ " << setw(58) << left << isblock << " ║" << endl;
+    cout << "╚════════════════╧════════════════════════════════════════════════════════════╝\n";
+
 }
 
 void Subcriber::DisplaySingleSubcriber(int age, int rateId, string connectDate,
-                            string phone, string surname, string name, string midName) {
-    cout << "\n┌────────────────────────────────────┐\n";
-    cout << "│          Введенные данные          │\n";
-    cout << "├────────────────────────────────────┤\n";
-    cout << "│ " << setw(20) << "ФИО:" << setw(10) << (surname + " " + name + " " + midName) << " │\n";
-    cout << "│ " << setw(20) << "Возраст:" << setw(20) << age << " │\n";
-    cout << "│ " << setw(20) << "Телефон:" << setw(20) << phone << " │\n";
-    cout << "│ " << setw(20) << "ID тарифа:" << setw(20) << rateId << " │\n";
-    cout << "│ " << setw(20) << "Дата подключения:" << setw(20) << connectDate << " │\n";
-    cout << "└────────────────────────────────────┘\n";
+                                       string phone, string surname, string name, string midName) {
+    auto trim = [](const string &str, size_t maxLength) {
+        if (str.length() > maxLength)
+            return str.substr(0, maxLength - 1) + ".";
+        return str;
+    };
+
+    cout << "\n╔═════════════════════════════════════════════════════════════════════════════╗\n";
+    cout <<   "║                              Данные абонента                                ║\n";
+    cout <<   "╠════════════════╤════════════════════════════════════════════════════════════╣\n";
+    cout << "║ " << setw(17) << left << "ФИО:"
+         << " │ " << setw(58) << left << trim(surname + " " + name + " " + midName, 53) << " ║\n";
+    cout << "║ " << setw(21) << left << "Возраст:"
+         << " │ " << setw(58) << left << age << " ║\n";
+    cout << "║ " << setw(21) << left << "Телефон:"
+         << " │ " << setw(58) << left << trim(phone, 50) << " ║\n";
+    cout << "║ " << setw(20) << left << "ID тарифа:"
+         << " │ " << setw(58) << left << rateId << " ║\n";
+    cout << "║ " << setw(21) << left << "Дата подключ.:"
+            << " │ " << setw(58) << left << trim(connectDate, 50) << " ║\n";
+    cout << "╚════════════════╧════════════════════════════════════════════════════════════╝\n";
 }

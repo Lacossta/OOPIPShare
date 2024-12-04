@@ -36,15 +36,15 @@ User Utils::FindUserById(const int id) {
 }
 
 Subcriber Utils::FindSubcriberById(const int id) {
-    Subcriber localSubcriber;
 
-    for(int i = 0; i < subcriber.getSubcribers().size(); i++){
-            localSubcriber.setSubId(subcriber.getSubcribers()[i].getSubId());
-            //localSubcriber.setMachineModel(machine.getSubcribers()[i].getMachineModel());
-            return localSubcriber;
-
+    for (auto it : subcriber.getSubcribers()){
+        if (it.getSubId() == id){
+            return it;
+        }
     }
-    return localSubcriber;
+
+    // Объект не найден, возвращаем Subcriber с subId = -1
+    return Subcriber();
 }
 
 int Utils::FindByIdIntoRates(const int id) {

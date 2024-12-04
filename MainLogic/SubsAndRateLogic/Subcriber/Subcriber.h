@@ -11,7 +11,7 @@ class Subcriber {
 private:
     vector<Subcriber> subcribers;
 protected:
-    int subId;
+    int subId = -1;
     bool isblock = false;
     int age;
     int rateId;
@@ -70,6 +70,24 @@ public:
 
     void DisplaySingleSubcriber(int age, int rateId, string connectDate,
                                 string phone, string surname, string name, string midName);
+
+    Subcriber& operator=(const Subcriber& other) {
+        if (this == &other) {
+            return *this;
+        }
+
+        subId = other.subId;
+        isblock = other.isblock;
+        age = other.age;
+        rateId = other.rateId;
+        connectDate = other.connectDate;
+        phone = other.phone;
+        surname = other.surname;
+        name = other.name;
+        midName = other.midName;
+
+        return *this;
+    }
 
 };
 

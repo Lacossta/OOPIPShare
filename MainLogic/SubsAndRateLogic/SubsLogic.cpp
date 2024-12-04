@@ -5,21 +5,26 @@
 SubsLogic subsLogic;
 
 tuple<string, string, string> SubsLogic::InputFullName() {
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     while (true) {
         cout << "Введите ФИО одной строкой (Фамилия Имя Отчество): ";
         string fullName;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        getline(cin, fullName);
-
+        getline(cin, fullName); // Читаем всю строку
         istringstream iss(fullName);
-        string surname, name, midName;
-        iss >> surname >> name >> midName;
+        vector<string> words;
+        string word;
 
-        if (surname.empty() || name.empty() || midName.empty() || !iss.eof()) {
+        // Разделяем строку на слова
+        while (iss >> word) {
+            words.push_back(word);
+        }
+
+        // Проверяем, введено ли три слова
+        if (words.size() < 3) {
             cout << "Ошибка: необходимо ввести три слова (Фамилия Имя Отчество). Попробуйте снова.\n";
         } else {
-            cout << "ФИО введено корректно" << endl;
-            return make_tuple(surname, name, midName);
+            // Возвращаем первые три слова
+            return make_tuple(words[0], words[1], words[2]);
         }
     }
 }
@@ -116,10 +121,10 @@ void SubsLogic::AddSubcriber() {// Метод для добавления або
         string surname, name, midName;
         tie(surname, name, midName) = InputFullName(); //распакоука
 
-        cout << "\nВведите возраст: ";
+        cout << "Введите возраст: ";
         int age = dataTypesValidators.CheckToInt();
         if (age <= 0) {
-            cerr << "Ошибка: возраст должен быть положительным числом." << endl;
+            cout << "Ошибка: возраст должен быть положительным числом." << endl;
             continue;
         }
 
@@ -139,7 +144,7 @@ void SubsLogic::AddSubcriber() {// Метод для добавления або
         } else {
             regex datePattern(R"(\d{4}-\d{2}-\d{2})");
             if (!regex_match(connectDate, datePattern) || connectDate[4] != '-' || connectDate[7] != '-') {
-                cerr << "Ошибка: дата должна быть в формате YYYY-MM-DD." << endl;
+                cout << "Ошибка: дата должна быть в формате YYYY-MM-DD." << endl;
                 continue;
             }
 
@@ -147,7 +152,7 @@ void SubsLogic::AddSubcriber() {// Метод для добавления або
             string currentDate = subcriberRegModule.getCurrentDate();
 
             if (connectDate < currentDate) {
-                cerr << "Ошибка: дата не может быть из прошлого. Попробуйте снова." << endl;
+                cout << "Ошибка: дата не может быть из прошлого. Попробуйте снова." << endl;
                 continue;
             } else if (connectDate > currentDate) {
                 isblock = true; // Если дата из будущего блокируем
@@ -178,16 +183,16 @@ void SubsLogic::EditSubcriber() { // Метод для редактирован�
         int id = dataTypesValidators.CheckToInt();
 
         // Поиск абонента по ID
-        Subcriber subcriber = utilsModule.FindSubcriberById(id);
-        if (subcriber.getSubId() == -1) {
+        Subcriber localSubcriber = utilsModule.FindSubcriberById(id);
+        if (localSubcriber.getSubId() == -1) {
             cerr << "Абонент с указанным ID не найден.\n";
             return;
         }
 
         // Вывод данных абонента
-        subcriber.DisplaySingleSubcriber(subcriber.getSubId(), subcriber.getIsblock(), subcriber.getAge(),
-                                         subcriber.getRateId(), subcriber.getConnectDate(), subcriber.getPhone(),
-                                         subcriber.getSurname(),  subcriber.getName(),  subcriber.getMidName());
+        localSubcriber.DisplaySingleSubcriber(localSubcriber.getSubId(), localSubcriber.getIsblock(), localSubcriber.getAge(),
+                                              localSubcriber.getRateId(), localSubcriber.getConnectDate(), localSubcriber.getPhone(),
+                                              localSubcriber.getSurname(), localSubcriber.getName(), localSubcriber.getMidName());
 
         cout << "\nЧто вы хотите отредактировать?\n";
         cout << "1. ФИО\n";
@@ -203,9 +208,9 @@ void SubsLogic::EditSubcriber() { // Метод для редактирован�
             case 1: { // Редактирование ФИО
                 cout << "Введите новое ФИО (одной строкой): ";
                 auto [surname, name, midName] = InputFullName();
-                subcriber.setSurname(surname);
-                subcriber.setName(name);
-                subcriber.setMidName(midName);
+                localSubcriber.setSurname(surname);
+                localSubcriber.setName(name);
+                localSubcriber.setMidName(midName);
                 break;
             }
             case 2: { // Редактирование возраста
@@ -215,19 +220,19 @@ void SubsLogic::EditSubcriber() { // Метод для редактирован�
                     cerr << "Возраст должен быть положительным.\n";
                     return;
                 }
-                subcriber.setAge(age);
+                localSubcriber.setAge(age);
                 break;
             }
             case 3: { // Редактирование телефона
                 cout << "Введите новый номер телефона: ";
                 string phone = PhoneInput();
-                subcriber.setPhone(phone);
+                localSubcriber.setPhone(phone);
                 break;
             }
             case 4: { // Редактирование ID тарифа
                 cout << "Введите новый ID тарифа: ";
                 int rateId = dataTypesValidators.CheckToInt();
-                subcriber.setRateId(rateId);
+                localSubcriber.setRateId(rateId);
                 break;
             }
             case 0: // Отмена
@@ -240,11 +245,11 @@ void SubsLogic::EditSubcriber() { // Метод для редактирован�
 
         // Замена в векторе абонентов
         vector<Subcriber> subcribers = subcriber.getSubcribers();
-        for (auto &item : subcribers) {
-            if (item.getSubId() == subcriber.getSubId()) {
-                item = subcriber;
+        for (int i = 0; i < subcribers.size(); ++i) {
+            if (subcribers[i].getSubId() == id) {
+                subcribers[i] = localSubcriber;
                 break;
-            }
+        }
         }
 
         subcriber.setSubcribers(subcribers);
@@ -262,24 +267,26 @@ void SubsLogic::RemoveSubcriber() {
         return;
     }
 
-    subcriber.DisplaySingleSubcriber(subcriber.getSubId(), subcriber.getIsblock(), subcriber.getAge(),
-                                     subcriber.getRateId(), subcriber.getConnectDate(), subcriber.getPhone(),
-                                     subcriber.getSurname(),  subcriber.getName(),  subcriber.getMidName());
+    subcriber.DisplaySingleSubcriber(subcriberToRemove.getSubId(), subcriberToRemove.getIsblock(), subcriberToRemove.getAge(),
+                                     subcriberToRemove.getRateId(), subcriberToRemove.getConnectDate(), subcriberToRemove.getPhone(),
+                                     subcriberToRemove.getSurname(), subcriberToRemove.getName(), subcriberToRemove.getMidName());
 
     cout << "\nВы уверены, что хотите удалить этого абонента? (Да/Нет): ";
     string confirm = dataTypesValidators.InputString();
     if (confirm == "Нет" && confirm.empty()) {
         cout << "Удаление отменено." << endl;
         return;
+    } else if (confirm == "Да") {
+
+        vector<Subcriber> subcribers = subcriber.getSubcribers();
+        subcribers.erase(remove_if(subcribers.begin(), subcribers.end(),
+                                   [subId](const Subcriber &sub) { return sub.getSubId() == subId; }),
+                         subcribers.end());
+
+        subcriber.setSubcribers(subcribers);
+        SubsFileSystem.RewriteSubcriberInfo(); // save to file
+        cout << "Абонент с ID " << subId << " был успешно удален." << endl;
     }
-
-    vector<Subcriber> subcribers = subcriber.getSubcribers();
-    subcribers.erase(remove_if(subcribers.begin(), subcribers.end(),
-                               [subId](const Subcriber& sub) { return sub.getSubId() == subId; }), subcribers.end());
-
-    subcriber.setSubcribers(subcribers);
-    SubsFileSystem.RewriteSubcriberInfo(); // save to file
-    cout << "Абонент с ID " << subId << " был успешно удален." << endl;
 }
 
 void SubsLogic::SearchSubcriber() {
@@ -292,16 +299,16 @@ void SubsLogic::SearchSubcriber() {
         return;
     }
 
-    subcriber.DisplaySingleSubcriber(subcriber.getSubId(), subcriber.getIsblock(), subcriber.getAge(),
-                                     subcriber.getRateId(), subcriber.getConnectDate(), subcriber.getPhone(),
-                                     subcriber.getSurname(),  subcriber.getName(),  subcriber.getMidName());
+    subcriber.DisplaySingleSubcriber(subcriberToFind.getSubId(), subcriberToFind.getIsblock(), subcriberToFind.getAge(),
+                                     subcriberToFind.getRateId(), subcriberToFind.getConnectDate(), subcriberToFind.getPhone(),
+                                     subcriberToFind.getSurname(),  subcriberToFind.getName(),  subcriberToFind.getMidName());
 }
 
 void SubsLogic::SortSubcriber() {
     cout << "Выберите критерий сортировки:\n";
-    cout << "1. По имени\n";
+    cout << "1. По ID\n";
     cout << "2. По возрасту\n";
-    cout << "3. По ID\n";
+    cout << "3. По имени \n";
     cout << "Введите номер критерия (1/2/3): ";
 
     int choice = dataTypesValidators.CheckToInt();
@@ -361,9 +368,9 @@ void SubsLogic::BanSubcriber() {
         subcriberToFind.setIsblock(true);
 
         vector<Subcriber> subcribers = subcriber.getSubcribers();
-        for (auto &item : subcribers) {
-            if (item.getSubId() == subcriber.getSubId()) {
-                item = subcriber;
+        for (int i = 0; i < subcribers.size(); ++i) {
+            if (subcribers[i].getSubId() == id) {
+                subcribers[i] = subcriberToFind;
                 break;
             }
         }
@@ -379,22 +386,29 @@ void SubsLogic::BanSubcriber() {
 }
 
 void SubsLogic::DisplayAllSubcribers(vector<Subcriber> subcribers) { // Метод для отображения абонентов
-    if (subcriber.getSubcribers().size() != 0) {
-        cout << "\n┌────────────────────────────────────┐\n";
-        cout << "│          Данные абонентов          │\n";
-        cout << "├────────────────────────────────────┤\n";
-        for (auto &item: subcribers) {
-            cout << "│ " << setw(20) << "ID:" << setw(20) << item.getSubId() << " │\n";
-            cout << "│ " << setw(20) << "Фамилия:" << setw(20) << item.getSurname() << " │\n";
-            cout << "│ " << setw(20) << "Имя:" << setw(20) << item.getName() << " │\n";
-            cout << "│ " << setw(20) << "Отчество:" << setw(20) << item.getMidName() << " │\n";
-            cout << "│ " << setw(20) << "Возраст:" << setw(20) << item.getAge() << " │\n";
-            cout << "│ " << setw(20) << "Телефон:" << setw(20) << item.getPhone() << " │\n";
-            cout << "│ " << setw(20) << "ID тарифа:" << setw(20) << item.getRateId() << " │\n";
-            cout << "│ " << setw(20) << "Дата подключения:" << setw(20) << item.getConnectDate() << " │\n";
-            cout << "│ " << setw(20) << "Заблокирован:" << setw(20) << boolalpha << item.getIsblock() << " │\n";
+    auto trim = [](const string &str, size_t maxLength) {
+        if (str.length() > maxLength)
+            return str.substr(0, maxLength - 1) + "."; // Обрезать и добавить "."
+        return str;
+    };
+
+    if (!subcribers.empty()) {
+        cout <<  "\n╔════════╤══════════════╤══════════════╤══════════════╤═════════╤══════════════════════╤═══════╤═══════════════════╤═══════════╗\n";
+        cout <<    "║   ID   │    Фамилия   │     Имя      │  Отчество    │ Возраст │       Телефон        │ Тариф │  Дата подключения │  Заблок.  ║\n";
+        cout <<    "╠════════╪══════════════╪══════════════╪══════════════╪═════════╪══════════════════════╪═══════╪═══════════════════╪═══════════╣\n";
+
+        for (const auto &item : subcribers) {
+            cout <<"║ " << setw(6) << left << item.getSubId() << " │ "
+                 << setw(12) << left << trim(item.getSurname(), 14) << " │ "
+                 << setw(12) << left << trim(item.getName(), 14) << " │ "
+                 << setw(12) << left << trim(item.getMidName(), 14) << " │ "
+                 << setw(7) << left << item.getAge() << " │ "
+                 << setw(20) << left << trim(item.getPhone(), 20) << " │ "
+                 << setw(5) << left << item.getRateId() << " │ "
+                 << setw(17) << left << trim(item.getConnectDate(), 17) << " │ "
+                 << setw(9) << left << item.getIsblock() << " ║" << endl;
         }
-        cout << "└────────────────────────────────────┘\n";
+        cout <<    "╚════════╧══════════════╧══════════════╧══════════════╧═════════╧══════════════════════╧═══════╧═══════════════════╧═══════════╝\n";
     }
     else{
         cout << "Список абонентов пуст" << endl;
@@ -402,27 +416,35 @@ void SubsLogic::DisplayAllSubcribers(vector<Subcriber> subcribers) { // Мето
 }
 
 void SubsLogic::DisplayAllSubcribers() {
-    if (subcriber.getSubcribers().size() != 0) {
-        cout << "\n┌────────────────────────────────────┐\n";
-        cout << "│          Данные абонентов          │\n";
-        cout << "├────────────────────────────────────┤\n";
-        for (auto &item: subcriber.getSubcribers()) {
-            cout << "│ " << setw(20) << "ID:" << setw(20) << item.getSubId() << " │\n";
-            cout << "│ " << setw(20) << "Фамилия:" << setw(20) << item.getSurname() << " │\n";
-            cout << "│ " << setw(20) << "Имя:" << setw(20) << item.getName() << " │\n";
-            cout << "│ " << setw(20) << "Отчество:" << setw(20) << item.getMidName() << " │\n";
-            cout << "│ " << setw(20) << "Возраст:" << setw(20) << item.getAge() << " │\n";
-            cout << "│ " << setw(20) << "Телефон:" << setw(20) << item.getPhone() << " │\n";
-            cout << "│ " << setw(20) << "ID тарифа:" << setw(20) << item.getRateId() << " │\n";
-            cout << "│ " << setw(20) << "Дата подключения:" << setw(20) << item.getConnectDate() << " │\n";
-            cout << "│ " << setw(20) << "Заблокирован:" << setw(20) << boolalpha << item.getIsblock() << " │\n";
+    auto trim = [](const string &str, size_t maxLength) {
+        if (str.length() > maxLength)
+            return str.substr(0, maxLength - 1) + "."; // Обрезать и добавить "."
+        return str;
+    };
+
+    if (!subcriber.getSubcribers().empty()) {
+        cout <<  "\n╔════════╤══════════════╤══════════════╤══════════════╤═════════╤══════════════════════╤═══════╤═══════════════════╤═══════════╗\n";
+        cout <<    "║   ID   │    Фамилия   │     Имя      │  Отчество    │ Возраст │       Телефон        │ Тариф │  Дата подключения │  Заблок.  ║\n";
+        cout <<    "╠════════╪══════════════╪══════════════╪══════════════╪═════════╪══════════════════════╪═══════╪═══════════════════╪═══════════╣\n";
+
+        for (const auto &item : subcriber.getSubcribers()) {
+            cout <<"║ " << setw(6) << left << item.getSubId() << " │ "
+                 << setw(12) << left << trim(item.getSurname(), 12) << " │ "
+                 << setw(12) << left << trim(item.getName(), 12) << " │ "
+                 << setw(12) << left << trim(item.getMidName(), 12) << " │ "
+                 << setw(7) << left << item.getAge() << " │ "
+                 << setw(20) << left << trim(item.getPhone(), 20) << " │ "
+                 << setw(5) << left << item.getRateId() << " │ "
+                 << setw(17) << left << trim(item.getConnectDate(), 17) << " │ "
+                 << setw(9) << left << item.getIsblock() << " ║" << endl;
         }
-        cout << "└────────────────────────────────────┘\n";
+        cout <<    "╚════════╧══════════════╧══════════════╧══════════════╧═════════╧══════════════════════╧═══════╧═══════════════════╧═══════════╝\n";
     }
     else{
         cout << "Список абонентов пуст" << endl;
     }
 }
+
 
 
 //      ---Client---
