@@ -8,6 +8,8 @@
 
 #include "../../PathToLibs.h"
 
+Login login;
+
 string Login::InputPassword(string password, User& user){
     while (true) {
         cout << "Введите пароль: ";
@@ -49,4 +51,8 @@ User Login::LoginMethod() {
             }
             }
         }
+    }
+
+    Login::Login() {
+
     }

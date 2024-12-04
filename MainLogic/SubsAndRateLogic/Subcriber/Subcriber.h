@@ -71,6 +71,8 @@ public:
     void DisplaySingleSubcriber(int age, int rateId, string connectDate,
                                 string phone, string surname, string name, string midName);
 
+    vector<Subcriber> FindByFullName(const string& surname, const string& name, const string& midName);
+
     Subcriber& operator=(const Subcriber& other) {
         if (this == &other) {
             return *this;

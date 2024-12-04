@@ -73,13 +73,22 @@ int Utils::FindByIdIntoClient(const int id) {
 }
 
 Client Utils::FindClientById(const int id) {
-    Client localClient;
+//    Client localClient;
+//
+//    for(int i = 0; i < client.getClients().size(); i++){
+//        localClient.setClientId(client.getClients()[i].getClientId());
+//        return localClient;
+//    }
+//    return localClient;
 
-    for(int i = 0; i < client.getClients().size(); i++){
-        localClient.setClientId(client.getClients()[i].getClientId());
-        return localClient;
+    for (auto it : client.getClients()){
+        if (it.getClientId() == id){
+            return it;
+        }
     }
-    return localClient;
+
+    // Объект не найден Id = -1
+    return Client();
 }
 
 

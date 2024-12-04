@@ -7,6 +7,8 @@
 
 class Login{
 public:
+    Login();
+
     User LoginMethod();
 
     string InputPassword(string password, User& user);

@@ -41,6 +41,8 @@ public:
     int generateClientId();
 
     void DisplaySingleClient(int clientId, int age, string surname, string name, string midName);
+
+    vector<Client> FindClientsByFullName(const string& surname, const string& name, const string& midName);
 };
 
 extern Client client;

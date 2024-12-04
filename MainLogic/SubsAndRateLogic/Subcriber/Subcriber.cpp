@@ -155,3 +155,13 @@ void Subcriber::DisplaySingleSubcriber(int age, int rateId, string connectDate,
             << " │ " << setw(58) << left << trim(connectDate, 50) << " ║\n";
     cout << "╚════════════════╧════════════════════════════════════════════════════════════╝\n";
 }
+
+vector<Subcriber> Subcriber::FindByFullName(const string& surname, const string& name, const string& midName) {
+    vector<Subcriber> result;
+    for (const auto& subcriber : subcriber.getSubcribers()) { // subcribers - список всех абонентов
+        if (subcriber.getSurname() == surname && subcriber.getName() == name && subcriber.getMidName() == midName) {
+            result.push_back(subcriber);
+        }
+    }
+    return result;
+}

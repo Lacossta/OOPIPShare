@@ -68,13 +68,42 @@ void Client::setMidName(const string &midName) {
 }
 
 void Client::DisplaySingleClient(int clientId, int age, string surname, string name, string midName) {
-    cout << "\n┌────────────────────────────────────┐\n";
-    cout << "│           Данные клиента           │\n";
-    cout << "├────────────────────────────────────┤\n";
-    cout << "│ " << setw(20) << "ID:" << setw(20) << clientId << " │\n";
-    cout << "│ " << setw(20) << "ФИО:" << setw(10) << (surname + " " + name + " " + midName) << " │\n";
-    cout << "│ " << setw(20) << "Возраст:" << setw(20) << age << " │\n";
-    cout << "└────────────────────────────────────┘\n";
+//    cout << "\n┌────────────────────────────────────┐\n";
+//    cout << "│           Данные клиента           │\n";
+//    cout << "├────────────────────────────────────┤\n";
+//    cout << "│ " << setw(20) << "ID:" << setw(20) << clientId << " │\n";
+//    cout << "│ " << setw(20) << "ФИО:" << setw(10) << (surname + " " + name + " " + midName) << " │\n";
+//    cout << "│ " << setw(20) << "Возраст:" << setw(20) << age << " │\n";
+//    cout << "└────────────────────────────────────┘\n";
+
+    auto trim = [](const string &str, size_t maxLength) {
+        if (str.length() > maxLength)
+            return str.substr(0, maxLength - 1) + ".";
+        return str;
+    };
+
+    cout << "\n╔═════════════════════════════════════════════════════════════════════════════╗\n";
+    cout <<   "║                              Данные клиента                                 ║\n";
+    cout <<   "╠════════════════╤════════════════════════════════════════════════════════════╣\n";
+    cout << "║ " << setw(14) << left << "ID:"
+         << " │ " << setw(58) << left << clientId << " ║\n";
+    cout << "║ " << setw(17) << left << "ФИО:"
+         << " │ " << setw(58) << left << trim(surname + " " + name + " " + midName, 53) << " ║\n";
+    cout << "║ " << setw(21) << left << "Возраст:"
+         << " │ " << setw(58) << left << age << " ║" << endl;
+    cout << "╚════════════════╧════════════════════════════════════════════════════════════╝\n";
+}
+
+vector<Client> Client::FindClientsByFullName(const string& surname, const string& name, const string& midName) {
+    vector<Client> foundClients;
+
+    for (const auto& client : clients) {
+        if (client.getSurname() == surname && client.getName() == name && client.getMidName() == midName) {
+            foundClients.push_back(client);
+        }
+    }
+
+    return foundClients;
 }
 
 

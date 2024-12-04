@@ -18,13 +18,13 @@ int EnteredUser::UserMenu(User& user) { // Меню пользователя
             case 2: // exit account
                 return 0;
             case 0:
-                work = false;
-                break;
+                return 1;
             default:
                 cout << "Ошибка!" << endl;
                 break;
         }
     }
+    return 0;
 }
 
 void EnteredUser::ChangeLoginMethod(string newLogin, User& user) {

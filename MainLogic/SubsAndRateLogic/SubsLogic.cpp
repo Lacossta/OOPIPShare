@@ -11,6 +11,9 @@ tuple<string, string, string> SubsLogic::InputFullName() {
         string fullName;
         getline(cin, fullName); // Читаем всю строку
         istringstream iss(fullName);
+        if(fullName.empty()){
+            return make_tuple("","","");
+        }
         vector<string> words;
         string word;
 
@@ -18,6 +21,7 @@ tuple<string, string, string> SubsLogic::InputFullName() {
         while (iss >> word) {
             words.push_back(word);
         }
+
 
         // Проверяем, введено ли три слова
         if (words.size() < 3) {
@@ -29,10 +33,16 @@ tuple<string, string, string> SubsLogic::InputFullName() {
     }
 }
 
+
+
 string SubsLogic::PhoneInput() {
     cout << "Введите номер телефона (формат +375(XX)XXXXXXX): ";
     while (true) {
         string phone = dataTypesValidators.InputString();
+
+        if(phone.empty()){
+            return "";
+        }
 
         // Проверка формата телефона
         regex phonePattern(R"(\+375\(\d{2}\)\d{7})");
@@ -72,6 +82,7 @@ int SubsLogic::MainMenu(User &user) {
                 break;
         }
     }
+    return 0;
 }
 
 
@@ -103,8 +114,7 @@ void SubsLogic::SubcriberMenu() { // Меню абонента
                 BanSubcriber();
                 break;
             case 0: // Назад
-                work = false;
-                break;
+                return;
             default:
                 cout << "Ошибка! Неверный выбор." << endl;
                 break;
@@ -115,24 +125,41 @@ void SubsLogic::SubcriberMenu() { // Меню абонента
 void SubsLogic::AddSubcriber() {// Метод для добавления абонента
     while (true) {
         cout << "Добавление нового абонента:" << endl;
-
         int subId = subcriber.generateId();
 
         string surname, name, midName;
+
         tie(surname, name, midName) = InputFullName(); //распакоука
+
+        if (surname == ""){
+            cout << "\nОтменено!"<< endl;
+            return;
+        }
 
         cout << "Введите возраст: ";
         int age = dataTypesValidators.CheckToInt();
+        if (age == -1){
+            cout << "\nОтменено!"<< endl;
+            return;
+        }
         if (age <= 0) {
             cout << "Ошибка: возраст должен быть положительным числом." << endl;
             continue;
         }
 
         string phone = PhoneInput();
+        if (phone.empty()){
+            cout << "\nОтменено!"<< endl;
+            return;
+        }
 
         cout << "Введите ID тарифа: ";
         DisplayRate();
         int rateId = dataTypesValidators.CheckToInt();
+        if (age == -1){
+            cout << "\nОтменено!"<< endl;
+            return;
+        }
 
         cout << "Введите дату подключения в формате YYYY-MM-DD (оставьте пустым, если дата текущая): ";
         string connectDate = dataTypesValidators.InputString();
@@ -164,7 +191,13 @@ void SubsLogic::AddSubcriber() {// Метод для добавления або
 
 
         cout << "\nВсе ли данные введены правильно? (0 - Нет, 1 - Да): ";
-        if (dataTypesValidators.CheckToBool()) {
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        string answer = dataTypesValidators.InputString();
+        if (answer.empty()){ //TODO:: починить
+            cout << "\nОтменено!"<< endl;
+            return;
+        }
+        if (answer=="1") {
             // Добавление абонента
             Subcriber addsSubcriber(subId, isblock, age, rateId, connectDate,
                                     phone, surname, name, midName);
@@ -172,13 +205,16 @@ void SubsLogic::AddSubcriber() {// Метод для добавления або
             SubsFileSystem.RewriteSubcriberInfo(); // save to file
             cout << "Абонент успешно добавлен." << endl;
             break;
-        } else {
+        }
+        else if (answer == "0"){
             cout << "Давайте попробуем заполнить данные заново.\n" << endl;
         }
+
     }
 }
 
 void SubsLogic::EditSubcriber() { // Метод для редактирования абонента
+        DisplayAllSubcribers();
         cout << "Введите ID абонента для редактирования: ";
         int id = dataTypesValidators.CheckToInt();
 
@@ -290,18 +326,51 @@ void SubsLogic::RemoveSubcriber() {
 }
 
 void SubsLogic::SearchSubcriber() {
-    cout << "Введите ID абонента для поиска: ";
-    int subId = dataTypesValidators.CheckToInt();
+    cout << "Выберите способ поиска абонента:\n";
+    cout << "1 - По ID\n";
+    cout << "2 - По ФИО\n";
+    cout << "Ваш выбор: ";
 
-    Subcriber subcriberToFind = utilsModule.FindSubcriberById(subId);
-    if (subcriberToFind.getSubId() == -1) {
-        cout << "Абонент с ID " << subId << " не найден!" << endl;
-        return;
+    int choice = dataTypesValidators.CheckToInt();
+
+    if (choice == 1) {
+        cout << "Введите ID абонента для поиска: ";
+        int subId = dataTypesValidators.CheckToInt();
+
+        Subcriber subcriberToFind = utilsModule.FindSubcriberById(subId);
+        if (subcriberToFind.getSubId() == -1) {
+            cout << "Абонент с ID " << subId << " не найден!" << endl;
+        }
+        else {
+            subcriber.DisplaySingleSubcriber(
+                    subcriberToFind.getSubId(), subcriberToFind.getIsblock(), subcriberToFind.getAge(),
+                    subcriberToFind.getRateId(), subcriberToFind.getConnectDate(), subcriberToFind.getPhone(),
+                    subcriberToFind.getSurname(), subcriberToFind.getName(), subcriberToFind.getMidName()
+            );
+        }
     }
 
-    subcriber.DisplaySingleSubcriber(subcriberToFind.getSubId(), subcriberToFind.getIsblock(), subcriberToFind.getAge(),
-                                     subcriberToFind.getRateId(), subcriberToFind.getConnectDate(), subcriberToFind.getPhone(),
-                                     subcriberToFind.getSurname(),  subcriberToFind.getName(),  subcriberToFind.getMidName());
+    else if (choice == 2) {
+        // Поиск по ФИО
+        auto [surname, name, midName] = InputFullName();
+
+        vector<Subcriber> foundSubcribers = subcriber.FindByFullName(surname, name, midName);
+        if (foundSubcribers.empty()) {
+            cout << "Абонент с ФИО \"" << surname << " " << name << " " << midName << "\" не найден!" << endl;
+        }
+        else {
+            cout << "\nНайдено " << foundSubcribers.size() << " абонент(ов):\n";
+            for (const auto& item : foundSubcribers) {
+                subcriber.DisplaySingleSubcriber(
+                        item.getSubId(), item.getIsblock(), item.getAge(),
+                        item.getRateId(), item.getConnectDate(), item.getPhone(),
+                        item.getSurname(), item.getName(), item.getMidName()
+                );
+            }
+        }
+    } else {
+        cout << "Ошибка: некорректный выбор. Попробуйте снова.\n";
+    }
 }
 
 void SubsLogic::SortSubcriber() {
@@ -356,9 +425,9 @@ void SubsLogic::BanSubcriber() {
     }
 
     cout << "Абонент найден:\n";
-    subcriber.DisplaySingleSubcriber(subcriber.getSubId(), subcriber.getIsblock(), subcriber.getAge(),
-                                     subcriber.getRateId(), subcriber.getConnectDate(), subcriber.getPhone(),
-                                     subcriber.getSurname(),  subcriber.getName(),  subcriber.getMidName());
+    subcriber.DisplaySingleSubcriber(subcriberToFind.getSubId(), subcriberToFind.getIsblock(), subcriberToFind.getAge(),
+                                     subcriberToFind.getRateId(), subcriberToFind.getConnectDate(), subcriberToFind.getPhone(),
+                                     subcriberToFind.getSurname(),  subcriberToFind.getName(),  subcriberToFind.getMidName());
 
 
     cout << "Вы действительно хотите заблокировать этого абонента? (Да/Нет): ";
@@ -488,10 +557,11 @@ void SubsLogic::AddClient() {
         int clientId = client.generateClientId();
 
         string surname, name, midName;
-        tie(surname, name, midName) = InputFullName(); // Ввод и разделение ФИО
+        tie(surname, name, midName) = InputFullName();
 
         cout << "Введите возраст: ";
         int age = dataTypesValidators.CheckToInt();
+
         if (age <= 0) {
             cerr << "Ошибка: возраст должен быть положительным числом." << endl;
             continue;
@@ -500,12 +570,16 @@ void SubsLogic::AddClient() {
         client.DisplaySingleClient(clientId, age, surname, name, midName);
 
         cout << "\nВсе ли данные введены правильно? (0 - Нет, 1 - Да): ";
-        if (dataTypesValidators.CheckToBool()) {
+        string answer = dataTypesValidators.InputString();
+        if (answer == "1") {
             Client newClient(clientId, age, surname, name, midName);
             client.addClient(newClient);
-            SubsFileSystem.RewriteClientInfo(); // to file
+            SubsFileSystem.RewriteClientInfo();
             cout << "Клиент успешно добавлен." << endl;
             break;
+        }
+        else if (answer.empty()){
+            return;
         }
         else {
             cout << "Давайте попробуем заполнить данные заново.\n" << endl;
@@ -514,6 +588,7 @@ void SubsLogic::AddClient() {
 }
 
 void SubsLogic::EditClient() {
+    DisplayAllClients();
     cout << "Введите ID клиента для редактирования: ";
     int id = dataTypesValidators.CheckToInt();
 
@@ -603,19 +678,51 @@ void SubsLogic::RemoveClient() { // Метод для удаления клие�
     cout << "Клиент с ID " << clientId << " был успешно удален." << endl;
 }
 
-void SubsLogic::SearchClient() { // Метод для поиска клиента
-    cout << "Введите ID клиента для поиска: ";
-    int clientId = dataTypesValidators.CheckToInt();
+void SubsLogic::SearchClient() {
+    cout << "Выберите способ поиска клиента:\n";
+    cout << "1 - По ID\n";
+    cout << "2 - По ФИО\n";
+    cout << "Ваш выбор: ";
 
-    Client clientToFind = utilsModule.FindClientById(clientId);
-    if (clientToFind.getClientId() == -1) {
-        cout << "Клиент с ID " << clientId << " не найден!" << endl;
-        return;
+    int choice = dataTypesValidators.CheckToInt();
+
+    if (choice == 1) {
+        // Поиск по ID
+        cout << "Введите ID клиента для поиска: ";
+        int clientId = dataTypesValidators.CheckToInt();
+
+        Client clientToFind = utilsModule.FindClientById(clientId);
+        if (clientToFind.getClientId() == -1) {
+            cout << "Клиент с ID " << clientId << " не найден!" << endl;
+        }
+        else {
+            clientToFind.DisplaySingleClient(
+                    clientToFind.getClientId(), clientToFind.getAge(),
+                    clientToFind.getSurname(), clientToFind.getName(),
+                    clientToFind.getMidName());
+        }
     }
 
-    clientToFind.DisplaySingleClient(clientToFind.getClientId(), clientToFind.getAge(),
-                                     clientToFind.getSurname(), clientToFind.getName(),
-                                     clientToFind.getMidName());
+    else if (choice == 2) {
+        // Поиск по ФИО
+        auto [surname, name, midName] = InputFullName();
+
+        vector<Client> foundClients = client.FindClientsByFullName(surname, name, midName);
+        if (foundClients.empty()) {
+            cout << "Клиент с ФИО \"" << surname << " " << name << " " << midName << "\" не найден!" << endl;
+        } else {
+            cout << "\nНайдено " << foundClients.size() << " клиент(ов):\n";
+            for (const auto& item : foundClients) {
+                client.DisplaySingleClient(
+                        item.getClientId(), item.getAge(),
+                        item.getSurname(), item.getName(),
+                        item.getMidName()
+                );
+            }
+        }
+    } else {
+        cout << "Ошибка: некорректный выбор. Попробуйте снова.\n";
+    }
 }
 
 void SubsLogic::SortClient() { // Метод для сортировки клиентов
@@ -659,38 +766,53 @@ void SubsLogic::SortClient() { // Метод для сортировки кли�
 }
 
 void SubsLogic::DisplayAllClients(vector<Client> clients) {
+    auto trim = [](const string &str, size_t maxLength) {
+        if (str.length() > maxLength)
+            return str.substr(0, maxLength - 1) + "."; // Обрезать и добавить "."
+        return str;
+    };
+
     if (!clients.empty()) {
-        cout << "\n┌────────────────────────────────────┐\n";
-        cout << "│           Данные клиентов          │\n";
-        cout << "├────────────────────────────────────┤\n";
-        for (const auto& client : clients) {
-            cout << "│ " << setw(20) << "ID:" << setw(20) << client.getClientId() << " │\n";
-            cout << "│ " << setw(20) << "Фамилия:" << setw(20) << client.getSurname() << " │\n";
-            cout << "│ " << setw(20) << "Имя:" << setw(20) << client.getName() << " │\n";
-            cout << "│ " << setw(20) << "Отчество:" << setw(20) << client.getMidName() << " │\n";
-            cout << "│ " << setw(20) << "Возраст:" << setw(20) << client.getAge() << " │\n";
+        cout <<  "\n╔════════╤══════════════╤══════════════╤══════════════╤═════════╗\n";
+        cout <<    "║   ID   │    Фамилия   │     Имя      │  Отчество    │ Возраст ║\n";
+        cout <<    "╠════════╪══════════════╪══════════════╪══════════════╪═════════╣\n";
+
+        for (const auto &item : clients) {
+            cout <<"║ " << setw(6) << left << item.getClientId() << " │ "
+                 << setw(12) << left << trim(item.getSurname(), 12) << " │ "
+                 << setw(12) << left << trim(item.getName(), 12) << " │ "
+                 << setw(12) << left << trim(item.getMidName(), 12) << " │ "
+                 << setw(7) << left << item.getAge() << " ║" << endl;
         }
-        cout << "└────────────────────────────────────┘\n";
-    } else {
+        cout <<    "╚════════╧══════════════╧══════════════╧══════════════╧═════════╝\n";
+    }
+    else{
         cout << "Список клиентов пуст" << endl;
     }
 }
 
 void SubsLogic::DisplayAllClients() {
-    vector<Client> clients = client.getClients();
-    if (!clients.empty()) {
-        cout << "\n┌────────────────────────────────────┐\n";
-        cout << "│           Данные клиентов          │\n";
-        cout << "├────────────────────────────────────┤\n";
-        for (const auto& client : clients) {
-            cout << "│ " << setw(20) << "ID:" << setw(20) << client.getClientId() << " │\n";
-            cout << "│ " << setw(20) << "Фамилия:" << setw(20) << client.getSurname() << " │\n";
-            cout << "│ " << setw(20) << "Имя:" << setw(20) << client.getName() << " │\n";
-            cout << "│ " << setw(20) << "Отчество:" << setw(20) << client.getMidName() << " │\n";
-            cout << "│ " << setw(20) << "Возраст:" << setw(20) << client.getAge() << " │\n";
+    auto trim = [](const string &str, size_t maxLength) {
+        if (str.length() > maxLength)
+            return str.substr(0, maxLength - 1) + "."; // Обрезать и добавить "."
+        return str;
+    };
+
+    if (!subcriber.getSubcribers().empty()) {
+        cout <<  "\n╔════════╤══════════════╤══════════════╤══════════════╤═════════╗\n";
+        cout <<    "║   ID   │    Фамилия   │     Имя      │  Отчество    │ Возраст ║\n";
+        cout <<    "╠════════╪══════════════╪══════════════╪══════════════╪═════════╣\n";
+
+        for (const auto &item : client.getClients()) {
+            cout <<"║ " << setw(6) << left << item.getClientId() << " │ "
+                 << setw(12) << left << trim(item.getSurname(), 12) << " │ "
+                 << setw(12) << left << trim(item.getName(), 12) << " │ "
+                 << setw(12) << left << trim(item.getMidName(), 12) << " │ "
+                 << setw(7) << left << item.getAge() << " ║" << endl;
         }
-        cout << "└────────────────────────────────────┘\n";
-    } else {
+        cout <<    "╚════════╧══════════════╧══════════════╧══════════════╧═════════╝\n";
+    }
+    else{
         cout << "Список клиентов пуст" << endl;
     }
 }
