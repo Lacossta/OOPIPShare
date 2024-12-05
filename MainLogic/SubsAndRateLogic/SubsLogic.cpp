@@ -33,8 +33,6 @@ tuple<string, string, string> SubsLogic::InputFullName() {
     }
 }
 
-
-
 string SubsLogic::PhoneInput() {
     cout << "Введите номер телефона (формат +375(XX)XXXXXXX): ";
     while (true) {
@@ -191,18 +189,18 @@ void SubsLogic::AddSubcriber() {// Метод для добавления або
 
 
         cout << "\nВсе ли данные введены правильно? (0 - Нет, 1 - Да): ";
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+//        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+//        cin.clear();
         string answer = dataTypesValidators.InputString();
         if (answer.empty()){ //TODO:: починить
             cout << "\nОтменено!"<< endl;
             return;
         }
         if (answer=="1") {
-            // Добавление абонента
             Subcriber addsSubcriber(subId, isblock, age, rateId, connectDate,
                                     phone, surname, name, midName);
             subcriber.addSubcriber(addsSubcriber);
-            SubsFileSystem.RewriteSubcriberInfo(); // save to file
+            SubsFileSystem.RewriteSubcriberInfo();
             cout << "Абонент успешно добавлен." << endl;
             break;
         }
@@ -218,14 +216,12 @@ void SubsLogic::EditSubcriber() { // Метод для редактирован�
         cout << "Введите ID абонента для редактирования: ";
         int id = dataTypesValidators.CheckToInt();
 
-        // Поиск абонента по ID
         Subcriber localSubcriber = utilsModule.FindSubcriberById(id);
         if (localSubcriber.getSubId() == -1) {
             cerr << "Абонент с указанным ID не найден.\n";
             return;
         }
 
-        // Вывод данных абонента
         localSubcriber.DisplaySingleSubcriber(localSubcriber.getSubId(), localSubcriber.getIsblock(), localSubcriber.getAge(),
                                               localSubcriber.getRateId(), localSubcriber.getConnectDate(), localSubcriber.getPhone(),
                                               localSubcriber.getSurname(), localSubcriber.getName(), localSubcriber.getMidName());
@@ -239,6 +235,11 @@ void SubsLogic::EditSubcriber() { // Метод для редактирован�
         cout << "Ваш выбор: ";
 
         int choice = dataTypesValidators.CheckToInt();
+
+        if (choice == -1){
+            cout << "\nОтменено!"<< endl;
+            return;
+        }
 
         switch (choice) {
             case 1: { // Редактирование ФИО
@@ -333,6 +334,11 @@ void SubsLogic::SearchSubcriber() {
 
     int choice = dataTypesValidators.CheckToInt();
 
+    if(choice == -1){
+        cout << "\nОтменено!"<< endl;
+        return;
+    }
+
     if (choice == 1) {
         cout << "Введите ID абонента для поиска: ";
         int subId = dataTypesValidators.CheckToInt();
@@ -416,6 +422,11 @@ void SubsLogic::SortSubcriber() {
 void SubsLogic::BanSubcriber() {
     cout << "Введите ID абонента для блокировки: ";
     int id = dataTypesValidators.CheckToInt();
+
+    if (id == -1){
+        cout << "\nОтменено!"<< endl;
+        return;
+    }
 
     Subcriber subcriberToFind = utilsModule.FindSubcriberById(id);
 
@@ -559,8 +570,18 @@ void SubsLogic::AddClient() {
         string surname, name, midName;
         tie(surname, name, midName) = InputFullName();
 
+        if (surname.empty()){
+            cout << "\nОтменено!"<< endl;
+            return;
+        }
+
         cout << "Введите возраст: ";
         int age = dataTypesValidators.CheckToInt();
+
+        if (age == -1){
+            cout << "\nОтменено!"<< endl;
+            return;
+        }
 
         if (age <= 0) {
             cerr << "Ошибка: возраст должен быть положительным числом." << endl;
@@ -579,6 +600,7 @@ void SubsLogic::AddClient() {
             break;
         }
         else if (answer.empty()){
+            cout << "\nОтменено!"<< endl;
             return;
         }
         else {
@@ -591,6 +613,11 @@ void SubsLogic::EditClient() {
     DisplayAllClients();
     cout << "Введите ID клиента для редактирования: ";
     int id = dataTypesValidators.CheckToInt();
+
+    if (id == -1){
+        cout << "\nОтменено!"<< endl;
+        return;
+    }
 
     Client client = utilsModule.FindClientById(id);
     if (client.getClientId() == -1) {
@@ -607,6 +634,11 @@ void SubsLogic::EditClient() {
     cout << "Ваш выбор: ";
 
     int choice = dataTypesValidators.CheckToInt();
+
+    if (choice == -1){
+        cout << "\nОтменено!"<< endl;
+        return;
+    }
 
     switch (choice) {
         case 1: {
@@ -652,6 +684,11 @@ void SubsLogic::RemoveClient() { // Метод для удаления клие�
     cout << "Введите ID клиента для удаления: ";
     int clientId = dataTypesValidators.CheckToInt();
 
+    if(clientId == -1){
+        cout << "\nОтменено!"<< endl;
+        return;
+    }
+
     Client clientToRemove = utilsModule.FindClientById(clientId);
     if (clientToRemove.getClientId() == -1) {
         cout << "Клиент с ID " << clientId << " не найден!" << endl;
@@ -685,6 +722,11 @@ void SubsLogic::SearchClient() {
     cout << "Ваш выбор: ";
 
     int choice = dataTypesValidators.CheckToInt();
+
+    if(choice == -1){
+        cout << "\nОтменено!"<< endl;
+        return;
+    }
 
     if (choice == 1) {
         // Поиск по ID
@@ -733,6 +775,11 @@ void SubsLogic::SortClient() { // Метод для сортировки кли�
     cout << "Введите номер критерия (1/2/3): ";
 
     int choice = dataTypesValidators.CheckToInt();
+
+    if(choice == -1){
+        cout << "\nОтменено!"<< endl;
+        return;
+    }
 
     while (choice < 1 || choice > 3) {
         cout << "Неверный ввод! Пожалуйста, выберите 1, 2 или 3.\n";
