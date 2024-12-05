@@ -1,27 +1,68 @@
 #include <iostream>
 #include <string>
-
-
 #include <stdio.h>
 #include <iostream>
 #include <limits>
+#include <conio.h>
+
+#include <unistd.h> // Для read()
 
 #include "../../PathToLibs.h"
 
 Login login;
 
-string Login::InputPassword(string password, User& user){
+//string Login::InputPassword(string password, User& user){
+//    while (true) {
+//        cout << "Введите пароль: ";
+//        password = dataTypesValidators.InputString();
+//        if(password == user.getPassword()){
+//            return password;
+//        }
+//        else {
+//            cout << "Неверный пароль, повторите" << endl;
+//        }
+//    }
+//}
+
+string InputHiddenPassword() {
+    string password;
+    char ch;
+
+    while (true) {
+        ch = _getch(); // Чтение символа без отображения
+
+        if (ch == 13) { // Если Enter
+            break;
+        } else if (ch == 8 || ch == 127) { // Если Backspace
+            if (!password.empty()) {
+                password.pop_back();
+                cout << "\b \b"; // Удаляем символ из вывода
+            }
+        } else {
+            password.push_back(ch);
+            cout << "*"; // Показываем звездочку
+        }
+    }
+
+    cout << endl;
+    return password;
+}
+
+string Login::InputPassword(string password, User& user) {
     while (true) {
         cout << "Введите пароль: ";
-        password = dataTypesValidators.InputString();
-        if(password == user.getPassword()){
-            return password;
-        }
-        else {
-            cout << "Неверный пароль, повторите" << endl;
+        string hiddenPassword = InputHiddenPassword();
+
+        if (hiddenPassword == user.getPassword()) {
+            return hiddenPassword;
+        } else {
+            cout << "Неверный пароль, повторите." << endl;
         }
     }
 }
+
+
+
 
 User Login::LoginMethod() {
     string login;

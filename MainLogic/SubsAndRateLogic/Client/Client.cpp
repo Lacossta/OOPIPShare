@@ -68,14 +68,6 @@ void Client::setMidName(const string &midName) {
 }
 
 void Client::DisplaySingleClient(int clientId, int age, string surname, string name, string midName) {
-//    cout << "\n┌────────────────────────────────────┐\n";
-//    cout << "│           Данные клиента           │\n";
-//    cout << "├────────────────────────────────────┤\n";
-//    cout << "│ " << setw(20) << "ID:" << setw(20) << clientId << " │\n";
-//    cout << "│ " << setw(20) << "ФИО:" << setw(10) << (surname + " " + name + " " + midName) << " │\n";
-//    cout << "│ " << setw(20) << "Возраст:" << setw(20) << age << " │\n";
-//    cout << "└────────────────────────────────────┘\n";
-
     auto trim = [](const string &str, size_t maxLength) {
         if (str.length() > maxLength)
             return str.substr(0, maxLength - 1) + ".";

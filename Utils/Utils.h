@@ -6,8 +6,9 @@
 #include <fstream>
 #include <sstream>
 #include "../PathToLibs.h"
-#include "../MainLogic/SubsAndRateLogic//Subcriber/Subcriber.h"
-#include "../MainLogic/SubsAndRateLogic//Client//Client.h"
+#include "../MainLogic/SubsAndRateLogic/Subcriber/Subcriber.h"
+#include "../MainLogic/SubsAndRateLogic/Client/Client.h"
+#include "../MainLogic/SubsAndRateLogic/Rate/Rate.h"
 
 using namespace std;
 
@@ -21,7 +22,7 @@ public:
 
 
 
-    int FindByIdIntoRates(const int id);
+    Rate FindRateById(const int id);
 
     int FindByIdIntoClient(const int id);
     Client FindClientById(const int id);

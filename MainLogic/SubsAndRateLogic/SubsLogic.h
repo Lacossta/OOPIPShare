@@ -38,7 +38,8 @@ public:
     void RemoveRate();
     void SearchRate();
     void SortRate();
-    void DisplayRate();
+    void DisplayRates();
+    void DisplayRate(vector<Rate> rates);
 
 
 //    void DeleteMachine(User &user);

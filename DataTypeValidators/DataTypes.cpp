@@ -57,6 +57,31 @@ int DataTypesValidators::CheckToInt() {
     return Integer;
 }
 
+float DataTypesValidators::CheckToFloat() {
+    float number = 0.0;
+    cin.clear();
+    while (true) {
+        char c = cin.peek();
+        if (c == '\n') {
+            cin.ignore();
+            return -1.0f;
+        }
+
+        cin >> number;
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cerr << "Вы ввели не число или неверный формат. Повторите попытку." << endl;
+        } else {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            break;
+        }
+    }
+
+    cin.clear();
+    return number;
+}
+
 
 string DataTypesValidators::InputString(){
     string str;

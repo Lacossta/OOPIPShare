@@ -58,3 +58,30 @@ int Rate::getCallTime() const {
 void Rate::setCallTime(int callTime) {
     Rate::callTime = callTime;
 }
+
+void Rate::DisplaySingleRate(int rateId, float cost, int amountOfNetwork, int callTime) const {
+    cout << "\n╔════════════════════════════════════════════════════════════════╗\n";
+    cout <<   "║                          Данные тарифа                         ║\n";
+    cout <<   "╠════════════════╤═══════════════════════════════════════════════╣\n";
+    cout << "║ " << setw(14) << left << "ID:"
+         << " │ " << setw(45) << left << rateId << " ║\n";
+    cout << "║ " << setw(23) << left << "Стоимость:"
+         << " │ " << setw(45) << left << cost << " ║\n";
+    cout << "║ " << setw(20) << left << "Трафик:"
+         << " │ " << setw(45) << left << amountOfNetwork << " ║\n";
+    cout << "║ " << setw(21) << left << "Беспл. минуты:"
+         << " │ " << setw(45) << left << callTime <<" ║" << endl;
+    cout <<  "╚════════════════╧═══════════════════════════════════════════════╝\n";
+}
+
+vector<Rate> Rate::FindRatesByCost(float cost){
+    vector<Rate> foundRates;
+
+    for (const auto& it : rates) {
+        if (it.getCost() == cost) {
+            foundRates.push_back(it);
+        }
+    }
+
+    return foundRates;
+}

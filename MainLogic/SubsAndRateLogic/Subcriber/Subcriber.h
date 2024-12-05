@@ -56,12 +56,14 @@ public:
 
     Subcriber();
 
-    void AddAmountRepairs() const;
-
     Subcriber(int subId, bool isblock, int age, int rateId, string connectDate,
               string phone, string surname, string name, string midName);
 
+    string getCurrentDate();
+
     int generateId();
+
+    void UpdateBlockStatus();
 
     void addSubcriber(const Subcriber &subcriberLoad);
 

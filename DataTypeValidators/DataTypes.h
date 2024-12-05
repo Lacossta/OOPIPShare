@@ -11,6 +11,7 @@ public:
     int CheckToInt();
     string InputString();
     bool CheckToBool();
+    float CheckToFloat();
 };
 
 extern DataTypesValidators dataTypesValidators;

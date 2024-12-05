@@ -165,3 +165,27 @@ vector<Subcriber> Subcriber::FindByFullName(const string& surname, const string&
     }
     return result;
 }
+
+string Subcriber::getCurrentDate() {
+    auto now = chrono::system_clock::now();
+    time_t now_time = chrono::system_clock::to_time_t(now);
+    tm *local_time = localtime(&now_time);
+
+    stringstream ss;
+    ss << put_time(local_time, "%Y-%m-%d"); // ГГГГ-ММ-ДД
+    return ss.str();
+}
+
+void Subcriber::UpdateBlockStatus() {
+    string currentDate = getCurrentDate();
+    cout << currentDate;
+
+    vector<Subcriber> localSubcribers = subcriber.getSubcribers();
+    for (int i = 0; i < localSubcribers.size(); ++i) {
+        if (localSubcribers[i].getConnectDate() == currentDate && localSubcribers[i].isblock != false) {
+            localSubcribers[i].isblock = false;
+        }
+    }
+    subcriber.setSubcribers(localSubcribers);
+    SubsFileSystem.RewriteSubcriberInfo(); // save to file
+}

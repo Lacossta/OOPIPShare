@@ -5,10 +5,15 @@
 SubsLogic subsLogic;
 
 tuple<string, string, string> SubsLogic::InputFullName() {
+    //TODO: пофиксить лишний энтер
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     while (true) {
         cout << "Введите ФИО одной строкой (Фамилия Имя Отчество): ";
         string fullName;
+//        if (cin.peek() == '\n') {
+//            cin.ignore(); // Удалить остатки символов новой строки.
+//        }
+
         getline(cin, fullName); // Читаем всю строку
         istringstream iss(fullName);
         if(fullName.empty()){
@@ -21,7 +26,6 @@ tuple<string, string, string> SubsLogic::InputFullName() {
         while (iss >> word) {
             words.push_back(word);
         }
-
 
         // Проверяем, введено ли три слова
         if (words.size() < 3) {
@@ -84,7 +88,7 @@ int SubsLogic::MainMenu(User &user) {
 }
 
 
-//      ---Subs---
+//      ===Subs===
 void SubsLogic::SubcriberMenu() { // Меню абонента
     bool work = true;
     while (work) {
@@ -152,42 +156,67 @@ void SubsLogic::AddSubcriber() {// Метод для добавления або
         }
 
         cout << "Введите ID тарифа: ";
-        DisplayRate();
-        int rateId = dataTypesValidators.CheckToInt();
-        if (age == -1){
+        cout <<  "\n╔══════════════════════════════════════════════════════╗\n";
+        cout <<    "║                       ТАРИФЫ                         ║\n";
+        cout <<    "╠══════════════════════════════════════════════════════╣";
+        DisplayRates();
+        cout << "Введите ID тарифа: ";
+        int rateId = -1;
+        cout << 1;
+        rateId = dataTypesValidators.CheckToInt();
+        if (rateId == -1){
             cout << "\nОтменено!"<< endl;
             return;
         }
 
-        cout << "Введите дату подключения в формате YYYY-MM-DD (оставьте пустым, если дата текущая): ";
-        string connectDate = dataTypesValidators.InputString();
+        string connectDate;
         bool isblock = false;
 
-        if (connectDate.empty()) {
-            connectDate = subcriberRegModule.getCurrentDate();
-            isblock = false;
-        } else {
-            regex datePattern(R"(\d{4}-\d{2}-\d{2})");
-            if (!regex_match(connectDate, datePattern) || connectDate[4] != '-' || connectDate[7] != '-') {
-                cout << "Ошибка: дата должна быть в формате YYYY-MM-DD." << endl;
-                continue;
+        while (true) {
+            cout << "Введите дату подключения в формате YYYY-MM-DD (оставьте пустым, если дата текущая): ";
+            connectDate = dataTypesValidators.InputString();
+
+            if(connectDate.empty()){
+                cout << "\nОтменено!"<< endl;
+                return;
             }
 
-            // Сравниваем дату с текущей
-            string currentDate = subcriberRegModule.getCurrentDate();
+            if (connectDate.empty()) {
+                connectDate = subcriber.getCurrentDate();
+                isblock = false;
+                break;
+            }
+            else{
+                regex datePattern(R"(\d{4}-\d{2}-\d{2})");
+                if (!regex_match(connectDate, datePattern)) {
+                    cout << "Ошибка: дата должна быть в формате YYYY-MM-DD." << endl;
+                    continue; // Повторяем ввод
+                }
 
-            if (connectDate < currentDate) {
-                cout << "Ошибка: дата не может быть из прошлого. Попробуйте снова." << endl;
-                continue;
-            } else if (connectDate > currentDate) {
-                isblock = true; // Если дата из будущего блокируем
+                // Сравниваем дату с текущей
+                string currentDate = subcriber.getCurrentDate();
+
+                if (connectDate < currentDate) {
+                    cout << "Ошибка: дата не может быть из прошлого. Попробуйте снова." << endl;
+                    continue; // Повторяем ввод
+                }
+                else if (connectDate > currentDate) {
+                    isblock = true; // Если дата из будущего, блокируем
+                    break;
+                }
             }
         }
 
         // Подтверждение ввода
-        subcriber.DisplaySingleSubcriber(age, rateId, connectDate, phone, surname, name, midName);
+        cout << 2;
+        if(rateId != -1) {
+            cout << 3;
+            subcriber.DisplaySingleSubcriber(age, rateId, connectDate, phone, surname, name, midName);
+        }
 
-
+        if (cin.peek() == '\n') {
+            cin.ignore(); // Удалить остатки символов новой строки.
+        }
         cout << "\nВсе ли данные введены правильно? (0 - Нет, 1 - Да): ";
 //        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 //        cin.clear();
@@ -207,7 +236,6 @@ void SubsLogic::AddSubcriber() {// Метод для добавления або
         else if (answer == "0"){
             cout << "Давайте попробуем заполнить данные заново.\n" << endl;
         }
-
     }
 }
 
@@ -526,8 +554,7 @@ void SubsLogic::DisplayAllSubcribers() {
 }
 
 
-
-//      ---Client---
+//      ===Client===
 void SubsLogic::ClientMenu() { // Меню клиента
     bool work = true;
     while (work) {
@@ -619,13 +646,13 @@ void SubsLogic::EditClient() {
         return;
     }
 
-    Client client = utilsModule.FindClientById(id);
-    if (client.getClientId() == -1) {
+    Client LocalClient = utilsModule.FindClientById(id);
+    if (LocalClient.getClientId() == -1) {
         cerr << "Клиент с указанным ID не найден.\n";
         return;
     }
 
-    client.DisplaySingleClient(client.getClientId(), client.getAge(), client.getSurname(), client.getName(), client.getMidName());
+    client.DisplaySingleClient(LocalClient.getClientId(), LocalClient.getAge(), LocalClient.getSurname(), LocalClient.getName(), LocalClient.getMidName());
 
     cout << "\nЧто вы хотите отредактировать?\n";
     cout << "1. ФИО\n";
@@ -644,9 +671,9 @@ void SubsLogic::EditClient() {
         case 1: {
             cout << "Введите новое ФИО (одной строкой): ";
             auto [surname, name, midName] = InputFullName();
-            client.setSurname(surname);
-            client.setName(name);
-            client.setMidName(midName);
+            LocalClient.setSurname(surname);
+            LocalClient.setName(name);
+            LocalClient.setMidName(midName);
             break;
         }
         case 2: {
@@ -656,7 +683,7 @@ void SubsLogic::EditClient() {
                 cerr << "Возраст должен быть положительным.\n";
                 return;
             }
-            client.setAge(age);
+            LocalClient.setAge(age);
             break;
         }
         case 0:
@@ -668,9 +695,9 @@ void SubsLogic::EditClient() {
     }
 
     vector<Client> clients = client.getClients();
-    for (auto &item : clients) {
-        if (item.getClientId() == client.getClientId()) {
-            item = client;
+    for (int i = 0; i < clients.size(); ++i) {
+        if (clients[i].getClientId() == id) {
+            clients[i] = LocalClient;
             break;
         }
     }
@@ -865,32 +892,344 @@ void SubsLogic::DisplayAllClients() {
 }
 
 
-
-//      ---Rate---
-void SubsLogic::RateMenu() { // Меню тарифных планов
-    cout << "123";
+//      ===Rate===
+void SubsLogic::RateMenu() { // Меню тарифов
+    bool work = true;
+    while (work) {
+        displayMenuUtil.DisplayActionRateMenu();
+        switch (dataTypesValidators.CheckToInt()) {
+            case 1: // Добавить тариф
+                AddRate();
+                break;
+            case 2: // Изменить тариф
+                EditRate();
+                break;
+            case 3: // Удалить тариф
+                RemoveRate();
+                break;
+            case 4: // Найти тариф
+                SearchRate();
+                break;
+            case 5: // Сортировать тарифы
+                SortRate();
+                break;
+            case 6: // Отобразить все тарифы
+                DisplayRates();
+                break;
+            case 0: // Назад
+                work = false;
+                break;
+            default:
+                cout << "Ошибка! Неверный выбор." << endl;
+                break;
+        }
+    }
 }
 
-void SubsLogic::AddRate() { // Метод для добавления тарифного плана
-    cout << "123";
+void SubsLogic::AddRate() {
+    while (true) {
+        cout << "Добавление нового тарифа:" << endl;
+
+        int rateId = rate.generateId();
+
+        cout << "Введите стоимость тарифа: ";
+        float cost = dataTypesValidators.CheckToFloat();
+
+        if (cost <= 0) {
+            cerr << "Ошибка: стоимость должна быть положительным числом." << endl;
+            continue;
+        }
+        else if(cost == -1.0f){
+            cout << "\nОтменено!" << endl;
+            return;
+        }
+
+        cout << "Введите количество сетевого трафика (в МБ): ";
+        int amountOfNetwork = dataTypesValidators.CheckToInt();
+
+        if (amountOfNetwork <= 0) {
+            cerr << "Ошибка: количество трафика должно быть положительным числом." << endl;
+            continue;
+        }
+        else if(amountOfNetwork == -1){
+            cout << "\nОтменено!" << endl;
+            return;
+        }
+
+
+        cout << "Введите время звонков (в минутах): ";
+        int callTime = dataTypesValidators.CheckToInt();
+
+        if (callTime <= 0) {
+            cerr << "Ошибка: время звонков должно быть положительным числом." << endl;
+            continue;
+        }
+        else if(callTime == -1){
+            cout << "\nОтменено!" << endl;
+            return;
+        }
+
+        rate.DisplaySingleRate(rateId, cost, amountOfNetwork, callTime);
+        cout << "\nВсе ли данные введены правильно? (0 - Нет, 1 - Да): ";
+        string answer = dataTypesValidators.InputString();
+        if (answer == "1") {
+            Rate newRate(rateId, cost, amountOfNetwork, callTime);
+            rate.addRate(newRate);
+            SubsFileSystem.RewriteRateInfo();
+            cout << "Тариф успешно добавлен." << endl;
+            break;
+        }
+        else if (answer.empty()) {
+            cout << "\nОтменено!" << endl;
+            return;
+        }
+        else {
+            cout << "Давайте попробуем заполнить данные заново.\n" << endl;
+        }
+    }
 }
 
-void SubsLogic::EditRate() { // Метод для редактирования тарифного плана
-    cout << "123";
+void SubsLogic::EditRate() {
+    DisplayRates();
+    cout << "Введите ID тарифа для редактирования: ";
+    int id = dataTypesValidators.CheckToInt();
+
+    if (id == -1) {
+        cout << "\nОтменено!" << endl;
+        return;
+    }
+
+    Rate Localrate = utilsModule.FindRateById(id);
+    if (Localrate.getRateId() == -1) {
+        cerr << "Тариф с указанным ID не найден.\n";
+        return;
+    }
+
+    rate.DisplaySingleRate(Localrate.getRateId(), Localrate.getCost(), Localrate.getAmountOfNetwork(), Localrate.getCallTime());
+
+    cout << "\nЧто вы хотите отредактировать?\n";
+    cout << "1. Стоимость\n";
+    cout << "2. Количество сетевого трафика\n";
+    cout << "3. Время звонков\n";
+    cout << "0. Отмена\n";
+    cout << "Ваш выбор: ";
+
+    int choice = dataTypesValidators.CheckToInt();
+
+    if (choice == -1) {
+        cout << "\nОтменено!" << endl;
+        return;
+    }
+
+    switch (choice) {
+        case 1: {
+            cout << "Введите новую стоимость: ";
+            float cost = dataTypesValidators.CheckToFloat();
+            if (cost <= 0) {
+                cerr << "Ошибка: стоимость должна быть положительным числом.\n";
+                return;
+            }
+            Localrate.setCost(cost);
+            break;
+        }
+        case 2: {
+            cout << "Введите новое количество трафика: ";
+            int amountOfNetwork = dataTypesValidators.CheckToInt();
+            if (amountOfNetwork <= 0) {
+                cerr << "Ошибка: количество трафика должно быть положительным.\n";
+                return;
+            }
+            Localrate.setAmountOfNetwork(amountOfNetwork);
+            break;
+        }
+        case 3: {
+            cout << "Введите новое время звонков: ";
+            int callTime = dataTypesValidators.CheckToInt();
+            if (callTime <= 0) {
+                cerr << "Ошибка: время звонков должно быть положительным.\n";
+                return;
+            }
+            Localrate.setCallTime(callTime);
+            break;
+        }
+        case 0:
+            cout << "Редактирование отменено.\n";
+            return;
+        default:
+            cerr << "Неверный выбор! Попробуйте снова.\n";
+            return;
+    }
+
+    vector<Rate> rates = rate.getRates();
+    for (int i = 0; i < rates.size(); ++i) {
+        if (rates[i].getRateId() == id) {
+            rates[i]= Localrate;
+            break;
+        }
+    }
+
+    rate.setRates(rates);
+    SubsFileSystem.RewriteRateInfo();
+    cout << "Данные тарифа успешно обновлены.\n";
 }
 
-void SubsLogic::RemoveRate() { // Метод для удаления тарифного плана
-    cout << "123";
+void SubsLogic::RemoveRate() {
+    cout << "Введите ID тарифа для удаления: ";
+    int rateId = dataTypesValidators.CheckToInt();
+
+    if (rateId == -1) {
+        cout << "\nОтменено!" << endl;
+        return;
+    }
+
+    Rate rateToRemove = utilsModule.FindRateById(rateId);
+    if (rateToRemove.getRateId() == -1) {
+        cout << "Тариф с ID " << rateId << " не найден!" << endl;
+        return;
+    }
+
+    rateToRemove.DisplaySingleRate(rateToRemove.getRateId(), rateToRemove.getCost(),
+                                   rateToRemove.getAmountOfNetwork(), rateToRemove.getCallTime());
+
+    cout << "\nВы уверены, что хотите удалить этот тариф? (Да/Нет): ";
+    string confirm = dataTypesValidators.InputString();
+    if (confirm != "Да" && confirm.empty()) {
+        cout << "Удаление отменено." << endl;
+        return;
+    }
+
+    vector<Rate> rates = rate.getRates();
+    rates.erase(remove_if(rates.begin(), rates.end(),
+                          [rateId](const Rate &rate) { return rate.getRateId() == rateId; }),
+                rates.end());
+
+    rate.setRates(rates);
+    SubsFileSystem.RewriteRateInfo();
+    cout << "Тариф с ID " << rateId << " был успешно удален." << endl;
 }
 
-void SubsLogic::SearchRate() { // Метод для поиска тарифного плана
-    cout << "123";
+void SubsLogic::SearchRate() {
+    cout << "Выберите способ поиска тарифа:\n";
+    cout << "1 - По ID\n";
+    cout << "2 - По стоимости\n";
+    cout << "Ваш выбор: ";
+
+    int choice = dataTypesValidators.CheckToInt();
+
+    if (choice == -1) {
+        cout << "\nОтменено!" << endl;
+        return;
+    }
+
+    if (choice == 1) {
+        cout << "Введите ID тарифа для поиска: ";
+        int rateId = dataTypesValidators.CheckToInt();
+
+        Rate rateToFind = utilsModule.FindRateById(rateId);
+        if (rateToFind.getRateId() == -1) {
+            cout << "Тариф с ID " << rateId << " не найден!" << endl;
+        } else {
+            rateToFind.DisplaySingleRate(rateToFind.getRateId(), rateToFind.getCost(),
+                                         rateToFind.getAmountOfNetwork(), rateToFind.getCallTime());
+        }
+    } else if (choice == 2) {
+        cout << "Введите стоимость тарифа: ";
+        float cost = dataTypesValidators.CheckToFloat();
+
+        vector<Rate> foundRates = rate.FindRatesByCost(cost);
+        if (foundRates.empty()) {
+            cout << "Тариф с указанной стоимостью не найден!" << endl;
+        } else {
+            cout << "\nНайдено " << foundRates.size() << " тариф(ов):\n";
+            for (const auto &item : foundRates) {
+                item.DisplaySingleRate(item.getRateId(), item.getCost(), item.getAmountOfNetwork(), item.getCallTime());
+            }
+        }
+    } else {
+        cout << "Ошибка: некорректный выбор. Попробуйте снова.\n";
+    }
 }
 
-void SubsLogic::SortRate() {    // Метод для сортировки тарифных планов
-    cout << "123";
+void SubsLogic::SortRate() {
+    cout << "Выберите критерий сортировки:\n";
+    cout << "1. По ID\n";
+    cout << "2. По стоимости\n";
+    cout << "3. По количеству трафика\n";
+    cout << "4. По времени звонков\n";
+    cout << "Введите номер критерия (1/2/3/4): ";
+
+    int choice = dataTypesValidators.CheckToInt();
+
+    if (choice == -1) {
+        cout << "\nОтменено!" << endl;
+        return;
+    }
+
+    while (choice < 1 || choice > 4) {
+        cout << "Неверный ввод! Пожалуйста, выберите 1, 2, 3 или 4.\n";
+        choice = dataTypesValidators.CheckToInt();
+    }
+
+    vector<Rate> sortedRates = rate.getRates();
+
+    switch (choice) {
+        case 1:
+            sort(sortedRates.begin(), sortedRates.end(),
+                 [](const Rate &a, const Rate &b) { return a.getRateId() < b.getRateId(); });
+            break;
+        case 2:
+            sort(sortedRates.begin(), sortedRates.end(),
+                 [](const Rate &a, const Rate &b) { return a.getCost() < b.getCost(); });
+            break;
+        case 3:
+            sort(sortedRates.begin(), sortedRates.end(),
+                 [](const Rate &a, const Rate &b) { return a.getAmountOfNetwork() < b.getAmountOfNetwork(); });
+            break;
+        case 4:
+            sort(sortedRates.begin(), sortedRates.end(),
+                 [](const Rate &a, const Rate &b) { return a.getCallTime() < b.getCallTime(); });
+            break;
+    }
+
+    rate.setRates(sortedRates);
+    DisplayRate(sortedRates);
+    SubsFileSystem.RewriteRateInfo();
 }
 
-void SubsLogic::DisplayRate() {    // Метод для отображения тарифных планов
-    cout << "123";
+void SubsLogic::DisplayRates() {
+    if (!rate.getRates().empty()) {
+        cout <<  "\n╔══════════════════════════════════════════════════════╗\n";
+        cout <<    "║                        ТАРИФЫ                        ║\n";
+        cout <<    "╠════════╤══════════════╤══════════════╤═══════════════╣\n";
+        cout <<    "║   ID   │   Стоимость  │    Трафик    │ Беспл. минуты ║\n";
+        cout <<    "╠════════╪══════════════╪══════════════╪═══════════════╣\n";
+
+        for (const auto &item : rate.getRates()) {
+            cout << "║ " << setw(6) << left << item.getRateId() << " │ "
+                 << setw(12) << left << item.getCost() << " │ "
+                 << setw(12) << left << item.getAmountOfNetwork() << " │ "
+                 << setw(12) << left << item.getCallTime() << "  ║" << endl;
+        }
+        cout <<    "╚════════╧══════════════╧══════════════╧═══════════════╝\n";
+    } else {
+        cout << "Список тарифов пуст." << endl;
+    }
+}
+
+void SubsLogic::DisplayRate(vector<Rate> rates) {    // Метод для отображения тарифных планов
+    if (!rates.empty()) {
+        cout <<  "\n╔════════╤══════════════╤══════════════╤═══════════════╗\n";
+        cout <<    "║   ID   │   Стоимость  │    Трафик    │ Беспл. минуты ║\n";
+        cout <<    "╠════════╪══════════════╪══════════════╪═══════════════╣\n";
+
+        for (const auto &item : rates) {
+            cout << "║ " << setw(6) << left << item.getRateId() << " │ "
+                 << setw(12) << left << item.getCost() << " │ "
+                 << setw(12) << left << item.getAmountOfNetwork() << " │ "
+                 << setw(12) << left << item.getCallTime() << "  ║" << endl;
+        }
+        cout <<    "╚════════╧══════════════╧══════════════╧═══════════════╝\n";
+    } else {
+        cout << "Список тарифов пуст." << endl;
+    }
 }

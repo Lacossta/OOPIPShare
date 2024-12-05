@@ -6,6 +6,7 @@
 
 Utils utilsModule;
 
+// ==USER==
 User Utils::FindUserByLogin(const string& login)
 {
     User user;
@@ -35,6 +36,30 @@ User Utils::FindUserById(const int id) {
     return user;
 }
 
+int Utils::FindByIdIntoUsers(const int id) {
+    vector <User> users = auth.getUsers();
+    for(int i =0; i<users.size(); i++)
+    {
+        if(users[i].getId() == id)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int Utils::GenerateID(){
+    if(auth.getUsers().size() > 0) {
+        return auth.getUsers()[auth.getUsers().size() - 1].getId() + 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+
+// ==Subcriber==
+
 Subcriber Utils::FindSubcriberById(const int id) {
 
     for (auto it : subcriber.getSubcribers()){
@@ -47,18 +72,19 @@ Subcriber Utils::FindSubcriberById(const int id) {
     return Subcriber();
 }
 
-int Utils::FindByIdIntoRates(const int id) {
-    vector <Rate> rates = rate.getRates();
-    for(int i =0; i<rates.size(); i++)
-    {
-        if(rates[i].getRateId() == id)
-        {
-            return i;
+// ==Rate==
+
+Rate Utils::FindRateById(const int id) {
+    for (auto it : rate.getRates()){
+        if (it.getRateId() == id){
+            return it;
         }
     }
-    return -1;
+
+    return Rate();
 }
 
+// ==Client==
 
 int Utils::FindByIdIntoClient(const int id) {
     vector <Client> clients = client.getClients();
@@ -89,26 +115,4 @@ Client Utils::FindClientById(const int id) {
 
     // Объект не найден Id = -1
     return Client();
-}
-
-
-int Utils::FindByIdIntoUsers(const int id) {
-    vector <User> users = auth.getUsers();
-    for(int i =0; i<users.size(); i++)
-    {
-        if(users[i].getId() == id)
-        {
-            return i;
-        }
-    }
-    return -1;
-}
-
-int Utils::GenerateID(){
-    if(auth.getUsers().size() > 0) {
-        return auth.getUsers()[auth.getUsers().size() - 1].getId() + 1;
-    }
-    else {
-        return 0;
-    }
 }

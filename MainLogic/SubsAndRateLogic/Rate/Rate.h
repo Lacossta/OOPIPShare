@@ -10,7 +10,7 @@ using namespace std;
 
 class Rate {
 protected:
-    int rateId;
+    int rateId =-1;
     float cost;
     int amountOfNetwork;
     int callTime;
@@ -39,6 +39,8 @@ public:
     Rate();
     Rate(int rateId, float cost, int amountOfNetwork, int callTime);
 
+    void DisplaySingleRate(int rateId, float cost, int amountOfNetwork, int callTime) const;
+    vector<Rate> FindRatesByCost(float cost);
 
 
 };
