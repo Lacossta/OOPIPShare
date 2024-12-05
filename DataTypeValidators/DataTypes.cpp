@@ -33,7 +33,7 @@ void DataTypesValidators::RemoveSpaces(string& str) {
 //}
 
 int DataTypesValidators::CheckToInt() {
-    int Integer =0;
+    int Integer = 0;
     cin.clear();
     while (true) {
         char c = cin.peek();
@@ -47,15 +47,17 @@ int DataTypesValidators::CheckToInt() {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cerr << "Вы ввели не число, повторите попытку " << endl;
-        } else {
+        }
+        else {
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             break;
         }
     }
 
-    cin.clear();
+//    cin.clear();
     return Integer;
 }
+
 
 float DataTypesValidators::CheckToFloat() {
     float number = 0.0;
@@ -106,6 +108,8 @@ string DataTypesValidators::InputString(){
     RemoveSpaces(str);
     return str;
 }
+
+
 
 bool DataTypesValidators::CheckToBool(){
     bool Boolean;

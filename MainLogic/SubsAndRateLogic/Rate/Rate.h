@@ -40,6 +40,7 @@ public:
     Rate(int rateId, float cost, int amountOfNetwork, int callTime);
 
     void DisplaySingleRate(int rateId, float cost, int amountOfNetwork, int callTime) const;
+
     vector<Rate> FindRatesByCost(float cost);
 
 

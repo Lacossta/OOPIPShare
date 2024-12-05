@@ -154,19 +154,23 @@ void SubsLogic::AddSubcriber() {// Метод для добавления або
             cout << "\nОтменено!"<< endl;
             return;
         }
-
-        cout << "Введите ID тарифа: ";
-        cout <<  "\n╔══════════════════════════════════════════════════════╗\n";
-        cout <<    "║                       ТАРИФЫ                         ║\n";
-        cout <<    "╠══════════════════════════════════════════════════════╣";
-        DisplayRates();
-        cout << "Введите ID тарифа: ";
         int rateId = -1;
-        cout << 1;
-        rateId = dataTypesValidators.CheckToInt();
-        if (rateId == -1){
-            cout << "\nОтменено!"<< endl;
-            return;
+        DisplayRates();
+        while(true) {
+            cout << "Введите ID тарифа: ";
+            rateId = dataTypesValidators.CheckToInt();
+
+            if(rateId != utilsModule.FindRateById(rateId).getRateId()){
+                cout << "Тарифный план с ID:" << rateId << " не найден, повторите ввод" << endl;
+                continue;
+            }
+            else{
+                break;
+            }
+            if (rateId == -1) {
+                cout << "\nОтменено!" << endl;
+                return;
+            }
         }
 
         string connectDate;
@@ -175,11 +179,6 @@ void SubsLogic::AddSubcriber() {// Метод для добавления або
         while (true) {
             cout << "Введите дату подключения в формате YYYY-MM-DD (оставьте пустым, если дата текущая): ";
             connectDate = dataTypesValidators.InputString();
-
-            if(connectDate.empty()){
-                cout << "\nОтменено!"<< endl;
-                return;
-            }
 
             if (connectDate.empty()) {
                 connectDate = subcriber.getCurrentDate();
@@ -207,8 +206,9 @@ void SubsLogic::AddSubcriber() {// Метод для добавления або
             }
         }
 
+
+
         // Подтверждение ввода
-        cout << 2;
         if(rateId != -1) {
             cout << 3;
             subcriber.DisplaySingleSubcriber(age, rateId, connectDate, phone, surname, name, midName);
