@@ -1,11 +1,12 @@
-1 1 qwe qwe qwe 2 +375(29)5066767 123 2344-23-23
-2 1 asd asd asd 23 +375(29)1233434 123 2345-23-23
-3 1 zxc zxc xzc 123 +375(29)1232323 123 2344-34-34
-4 1 sdf sdf sdf 12 +375(29)1233434 123 2024-12-04
-5 0 qwertyu qwertyuiopasdfghj qwert 12 +375(29)1232323 12 2024-12-06
-6 0 Tomarov Arseniy Genadievich 4 +375(29)1232323 321 2024-12-06
-7 0 Tomarov Arseniy Genadievich 123 +375(29)1232323 123 2024-12-06
-8 0 qwe qwe qwe 123 +375(23)1232323 -1 2024-12-06
-9 0 qwe qwe qwe 123 +375(23)1232323 2 2024-12-06
-10 0 Ivanov Ivan Ivanovich 123123 +375(23)1232323 2 2024-12-06
-11 0 qwe qwe qwe 123 +375(23)1232325 2 2024-12-06
+1 0 Petrov Petr Petrovich 35 +375(29)4567890 1 2024-12-06
+2 0 Sidorov Sidor Sidorovich 28 +375(25)2345678 2 2024-12-06
+3 0 Kozlov Alexey Fedorovich 40 +375(33)3456789 3 2024-12-06
+4 0 Fedorov Fedor Fedorovich 55 +375(29)9876543 1 2024-12-06
+5 0 Mikhailov Mikhail Mikhailovich 30 +375(29)1234567 2 2024-12-06
+6 0 Tomarov Arseniy Genadievich 41 +375(29)1232323 2 2024-12-06
+7 0 Ivanov Ivan Ivanovich 52 +375(23)1232323 2 2024-12-06
+8 0 Glebov Gleb Glebovich 21 +375(25)5658756 3 2024-12-07
+9 1 Orlov Sergey Sergeevich 27 +375(33)6543210 1 2024-12-07
+10 1 Abramov Viktor Viktorovich 32 +375(29)7654321 1 2024-12-07
+
+

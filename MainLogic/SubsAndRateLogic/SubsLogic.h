@@ -42,22 +42,6 @@ public:
     void DisplayRates();
     void DisplayRate(vector<Rate> rates);
 
-
-//    void DeleteMachine(User &user);
-//    void DisplayMachines(User &user, int variant);
-//
-//
-//    void RepairMenu(User &user);
-//    void AddRepair();
-//    void DisplayAllRepairsTypes();
-//    void DeleteRepairType();
-//
-//    void AddToRepair(User &user);
-//    void DeleteRepair(User &user);
-//    void DisplayRepairs(User &user);
-//
-//    void DisplayAll(User &user);
-
 };
 
 extern SubsLogic subsLogic;

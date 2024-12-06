@@ -9,3 +9,4 @@ configDataPath: ../Auth/bin/config.txt
 SubcriberDataPath: ../bin/SubcriberData.txt
 RateDataPath = ../bin/RateData.txt
 ClientDataPath = ../bin/ClientDataPath.txt
+

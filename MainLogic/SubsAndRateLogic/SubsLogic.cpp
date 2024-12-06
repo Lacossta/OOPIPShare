@@ -178,12 +178,12 @@ void SubsLogic::AddSubcriber() {// Метод для добавления або
                 cout << "Тарифный план с ID:" << rateId << " не найден, повторите ввод" << endl;
                 continue;
             }
-            else{
-                break;
-            }
-            if (rateId == -1) {
+            else if (rateId == -1) {
                 cout << "\nОтменено!" << endl;
                 return;
+            }
+            else{
+                break;
             }
         }
 
@@ -213,7 +213,7 @@ void SubsLogic::AddSubcriber() {// Метод для добавления або
                     cout << "Ошибка: дата не может быть из прошлого. Попробуйте снова." << endl;
                     continue; // Повторяем ввод
                 }
-                else if (connectDate > currentDate) {
+                if (connectDate > currentDate) {
                     isblock = true; // Если дата из будущего, блокируем
                     break;
                 }
@@ -222,10 +222,8 @@ void SubsLogic::AddSubcriber() {// Метод для добавления або
 
         // Подтверждение ввода
         if(rateId != -1) {
-            cout << 3;
             subcriber.DisplaySingleSubcriber(age, rateId, connectDate, phone, surname, name, midName);
         }
-
 
         cout << "\nВсе ли данные введены правильно? (0 - Нет, 1 - Да): ";
 

@@ -22,8 +22,6 @@ public:
     void DisplayChangeInfoMenu(User& user); //!! изменить данные пользователя
 
     void DisplayRateMenu(); //!! меню тарифного плана
-
-
 };
 
 extern DisplayMenuUtil displayMenuUtil;

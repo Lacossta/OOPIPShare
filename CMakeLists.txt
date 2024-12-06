@@ -3,6 +3,7 @@ project(kursach)
 
 set(CMAKE_CXX_STANDARD 17)
 
+
 add_executable(kursach main.cpp
         config/config.cpp
         config/config.h
@@ -21,9 +22,6 @@ add_executable(kursach main.cpp
 
         DataTypeValidators/DataTypes.cpp
         DataTypeValidators/DataTypes.h
-
-        Auth/UserFileSystem/HeshedPasswordsFileSystem/HeshedPasswordFileSystem.cpp
-        Auth/UserFileSystem/HeshedPasswordsFileSystem/HeshedPasswordFileSystem.h
 
         MainLogic/SubsAndRateLogic/Subcriber/Subcriber.cpp
         MainLogic/SubsAndRateLogic/Subcriber/Subcriber.h

@@ -1,11 +1,11 @@
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-
-//TODO: еще одна утильса
-
+//#include <iostream>
+//#include <iomanip>
+//#include <sstream>
+//#include <openssl/sha.h>
+//
+//
 //#include "HeshedPasswordFileSystem.h"
-
+//
 //string encodePassword(const string& password){
 //    const unsigned char* password_bytes = reinterpret_cast<const unsigned char*>(password.c_str());
 //
