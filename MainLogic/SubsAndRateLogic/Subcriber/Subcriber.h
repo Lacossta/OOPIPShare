@@ -16,7 +16,7 @@ protected:
     int age;
     int rateId;
     string connectDate;
-    string phone;
+    string phone = "";
     string surname;
     string name;
     string midName;
@@ -74,6 +74,8 @@ public:
                                 string phone, string surname, string name, string midName);
 
     vector<Subcriber> FindByFullName(const string& surname, const string& name, const string& midName);
+
+    string FindSubscriberByPhone(const string& phone);
 
     Subcriber& operator=(const Subcriber& other) {
         if (this == &other) {

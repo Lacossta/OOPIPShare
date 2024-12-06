@@ -18,6 +18,7 @@ public:
     void SearchSubcriber();
     void SortSubcriber();
     void BanSubcriber();
+    void CreateSubscriberFromClient();
     void DisplayAllSubcribers(vector<Subcriber> subcribers);
     void DisplayAllSubcribers();
 

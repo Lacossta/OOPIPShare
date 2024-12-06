@@ -115,6 +115,9 @@ void SubsLogic::SubcriberMenu() { // Меню абонента
             case 7: // Блокировать абонента
                 BanSubcriber();
                 break;
+            case 8: // из клиента
+                CreateSubscriberFromClient();
+                break;
             case 0: // Назад
                 return;
             default:
@@ -149,11 +152,22 @@ void SubsLogic::AddSubcriber() {// Метод для добавления або
             continue;
         }
 
-        string phone = PhoneInput();
-        if (phone.empty()){
-            cout << "\nОтменено!"<< endl;
-            return;
+        string phone;
+        while(true) {
+            phone = PhoneInput();
+            if (subcriber.FindSubscriberByPhone(phone) == phone){
+                cout << "Ошибка, попробуйте ввести еще раз" << endl;
+                continue;
+            }
+            else if (phone.empty()) {
+                cout << "\nОтменено!" << endl;
+                return;
+            }
+            else{
+                break;
+            }
         }
+
         int rateId = -1;
         DisplayRates();
         while(true) {
@@ -206,20 +220,15 @@ void SubsLogic::AddSubcriber() {// Метод для добавления або
             }
         }
 
-
-
         // Подтверждение ввода
         if(rateId != -1) {
             cout << 3;
             subcriber.DisplaySingleSubcriber(age, rateId, connectDate, phone, surname, name, midName);
         }
 
-        if (cin.peek() == '\n') {
-            cin.ignore(); // Удалить остатки символов новой строки.
-        }
+
         cout << "\nВсе ли данные введены правильно? (0 - Нет, 1 - Да): ";
-//        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-//        cin.clear();
+
         string answer = dataTypesValidators.InputString();
         if (answer.empty()){ //TODO:: починить
             cout << "\nОтменено!"<< endl;
@@ -290,7 +299,21 @@ void SubsLogic::EditSubcriber() { // Метод для редактирован�
             }
             case 3: { // Редактирование телефона
                 cout << "Введите новый номер телефона: ";
-                string phone = PhoneInput();
+                string phone;
+                while(true) {
+                    phone = PhoneInput();
+                    if (subcriber.FindSubscriberByPhone(phone) == phone){
+                        cout << "Ошибка, попробуйте ввести еще раз" << endl;
+                        continue;
+                    }
+                    else if (phone.empty()) {
+                        cout << "\nОтменено!" << endl;
+                        return;
+                    }
+                    else{
+                        break;
+                    }
+                }
                 localSubcriber.setPhone(phone);
                 break;
             }
@@ -491,6 +514,122 @@ void SubsLogic::BanSubcriber() {
     else {
         cout << "Операция блокировки отменена.\n";
     }
+}
+
+void SubsLogic::CreateSubscriberFromClient() {
+    cout << "Список доступных клиентов:" << endl;
+    DisplayAllClients();
+
+    cout << "Введите ID клиента, которого хотите преобразовать в абонента: ";
+    int clientId = dataTypesValidators.CheckToInt();
+
+    if (clientId == -1) {
+        cout << "\nОтменено!" << endl;
+        return;
+    }
+
+    Client existingClient = utilsModule.FindClientById(clientId);
+    if (existingClient.getClientId() == -1) {
+        cout << "Ошибка: клиент с указанным ID не найден!" << endl;
+        return;
+    }
+
+    string surname = existingClient.getSurname();
+    string name = existingClient.getName();
+    string midName = existingClient.getMidName();
+    int age = existingClient.getAge();
+
+    cout << "Перенесенные данные: " << endl;
+    cout << "Фамилия: " << surname << ", Имя: " << name << ", Отчество: " << midName << ", Возраст: " << age << endl << endl;
+
+
+    cout << "Введите номер телефона: ";
+    string phone = PhoneInput();
+    if (phone.empty()) {
+        cout << "\nОтменено!" << endl;
+        return;
+    }
+
+    int rateId = -1;
+    DisplayRates();
+    while (true) {
+        cout << "Введите ID тарифа: ";
+        rateId = dataTypesValidators.CheckToInt();
+
+        if (rateId != utilsModule.FindRateById(rateId).getRateId()) {
+            cout << "Тарифный план с ID:" << rateId << " не найден, повторите ввод." << endl;
+            continue;
+        } else {
+            break;
+        }
+
+        if (rateId == -1) {
+            cout << "\nОтменено!" << endl;
+            return;
+        }
+    }
+
+    // Ввод даты подключения
+    string connectDate;
+    bool isblock = false;
+
+    while (true) {
+        cout << "Введите дату подключения в формате YYYY-MM-DD (оставьте пустым, если дата текущая): ";
+        connectDate = dataTypesValidators.InputString();
+
+        if (connectDate.empty()) {
+            connectDate = subcriber.getCurrentDate();
+            isblock = false;
+            break;
+        } else {
+            regex datePattern(R"(\d{4}-\d{2}-\d{2})");
+            if (!regex_match(connectDate, datePattern)) {
+                cout << "Ошибка: дата должна быть в формате YYYY-MM-DD." << endl;
+                continue; // Повторяем ввод
+            }
+
+            // Сравниваем дату с текущей
+            string currentDate = subcriber.getCurrentDate();
+
+            if (connectDate < currentDate) {
+                cout << "Ошибка: дата не может быть из прошлого. Попробуйте снова." << endl;
+                continue; // Повторяем ввод
+            } else if (connectDate > currentDate) {
+                isblock = true; // Если дата из будущего, блокируем
+                break;
+            }
+        }
+    }
+
+    vector<Client> clients = client.getClients();
+    clients.erase(remove_if(clients.begin(), clients.end(),
+                            [clientId](const Client& client) { return client.getClientId() == clientId; }), clients.end());
+
+    client.setClients(clients);
+    SubsFileSystem.RewriteClientInfo();
+
+
+
+    cout << "\nВсе ли данные введены правильно? (0 - Нет, 1 - Да): ";
+//        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+//        cin.clear();
+    string answer = dataTypesValidators.InputString();
+    if (answer.empty()){ //TODO:: починить
+        cout << "\nОтменено!"<< endl;
+        return;
+    }
+    if (answer=="1") {
+        int subId = subcriber.generateId();
+        Subcriber newSubscriber(subId, isblock, age, rateId, connectDate, phone, surname, name, midName);
+        subcriber.addSubcriber(newSubscriber);
+        SubsFileSystem.RewriteSubcriberInfo();
+    }
+    else if (answer == "0"){
+        cout << "\nОтменено!" << endl;
+        return;
+    }
+
+    cout << "Клиент успешно преобразован в абонента." << endl;
 }
 
 void SubsLogic::DisplayAllSubcribers(vector<Subcriber> subcribers) { // Метод для отображения абонентов
@@ -873,7 +1012,9 @@ void SubsLogic::DisplayAllClients() {
     };
 
     if (!subcriber.getSubcribers().empty()) {
-        cout <<  "\n╔════════╤══════════════╤══════════════╤══════════════╤═════════╗\n";
+        cout <<  "\n╔═══════════════════════════════════════════════════════════════╗\n";
+        cout <<    "║                            Клиенты                            ║\n";
+        cout <<    "╠════════╤══════════════╤══════════════╤════════════════════════╣\n";
         cout <<    "║   ID   │    Фамилия   │     Имя      │  Отчество    │ Возраст ║\n";
         cout <<    "╠════════╪══════════════╪══════════════╪══════════════╪═════════╣\n";
 

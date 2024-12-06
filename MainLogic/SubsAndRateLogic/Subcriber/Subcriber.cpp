@@ -21,7 +21,6 @@ Subcriber::Subcriber(int subId, bool isblock, int age, int rateId, string connec
     this ->midName = midName;
 }
 
-
 int Subcriber::getSubId() const {
     return subId;
 }
@@ -84,7 +83,6 @@ const string &Subcriber::getMidName() const {
 void Subcriber::setMidName(const string &midName) {
     Subcriber::midName = midName;
 }
-
 
 void Subcriber::addSubcriber(const Subcriber &subcriberLoad) {
     subcribers.push_back(subcriberLoad);
@@ -166,6 +164,15 @@ vector<Subcriber> Subcriber::FindByFullName(const string& surname, const string&
     return result;
 }
 
+string Subcriber::FindSubscriberByPhone(const string& phone){
+    for (const auto& item : subcriber.getSubcribers()) {
+        if (item.getPhone() == phone) {
+            return item.getPhone();
+        }
+    }
+    return "none";
+}
+
 string Subcriber::getCurrentDate() {
     auto now = chrono::system_clock::now();
     time_t now_time = chrono::system_clock::to_time_t(now);
@@ -189,3 +196,4 @@ void Subcriber::UpdateBlockStatus() {
     subcriber.setSubcribers(localSubcribers);
     SubsFileSystem.RewriteSubcriberInfo(); // save to file
 }
+
