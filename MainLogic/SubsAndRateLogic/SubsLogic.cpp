@@ -6,7 +6,7 @@ SubsLogic subsLogic;
 
 tuple<string, string, string> SubsLogic::InputFullName() {
     //TODO: пофиксить лишний энтер
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    //cin.ignore(numeric_limits<streamsize>::max(), '\n');
     while (true) {
         cout << "Введите ФИО одной строкой (Фамилия Имя Отчество): ";
         string fullName;
